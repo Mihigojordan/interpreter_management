@@ -88,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
 
 
   const getNavlinks = (role: string): (NavItem | DropdownGroup)[] => {
-    const basePath = `/${role}/dashboard`;
+    const basePath = `/dashboard`;
 
     return [
       {

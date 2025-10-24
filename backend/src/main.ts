@@ -16,7 +16,7 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || 'https://abytechhub.com',
+    origin: [ process.env.FRONTEND_URL_ONLY , 'https://abytechhub.com'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
