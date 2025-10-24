@@ -1,7 +1,13 @@
-import { Injectable, BadRequestException, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  UnauthorizedException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class InterpreterAuthService {
@@ -9,7 +15,7 @@ export class InterpreterAuthService {
 
   private emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // Register a new interpreter
+  // ✅ Register a new interpreter
   async registerInterpreter(
     name: string,
     email: string,
@@ -98,7 +104,7 @@ async login({ email, password }: { email: string; password: string }) {
   };
 }
 
-  // Get profile
+  // ✅ Get profile (supports JSON languages)
   async getProfile(interpreterId: string) {
     const interpreter = await this.prisma.interpreter.findUnique({
       where: { id: interpreterId },
@@ -118,10 +124,11 @@ async login({ email, password }: { email: string; password: string }) {
     });
 
     if (!interpreter) throw new NotFoundException('Interpreter not found');
-    return interpreter;
+
+    return interpreter; // ✅ already typed as Json
   }
 
-  // Update profile
+  // ✅ Update profile (supports JSON languages)
   async editProfile(
     id: string,
     data: Partial<{
@@ -140,7 +147,9 @@ async login({ email, password }: { email: string; password: string }) {
 
     // Check for duplicate email
     if (data.email && data.email !== interpreter.email) {
-      const exists = await this.prisma.interpreter.findUnique({ where: { email: data.email } });
+      const exists = await this.prisma.interpreter.findUnique({
+        where: { email: data.email },
+      });
       if (exists) throw new BadRequestException('Email already exists');
     }
 
