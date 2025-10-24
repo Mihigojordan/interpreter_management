@@ -33,7 +33,14 @@ export class InterpreterAuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const interpreter = await this.prisma.interpreter.create({
-      data: { name, email, phone, password: hashedPassword, languages: JSON.stringify(languages), country },
+      data: {
+        name,
+        email,
+        phone,
+        password: hashedPassword,
+        languages: JSON.stringify(languages),
+        country,
+      },
     });
 
     return { message: 'Interpreter registered successfully', interpreter };
@@ -58,7 +65,7 @@ export class InterpreterAuthService {
   // Get profile
   async getProfile(interpreterId: string) {
     const interpreter = await this.prisma.interpreter.findUnique({
-      where: { id: parseInt(interpreterId) },
+      where: { id: interpreterId },
       select: {
         id: true,
         name: true,
@@ -92,7 +99,7 @@ export class InterpreterAuthService {
       isOnline: boolean;
     }>,
   ) {
-    const interpreter = await this.prisma.interpreter.findUnique({ where: { id: parseInt(id) } });
+    const interpreter = await this.prisma.interpreter.findUnique({ where: { id } });
     if (!interpreter) throw new NotFoundException('Interpreter not found');
 
     // Check for duplicate email
@@ -102,7 +109,7 @@ export class InterpreterAuthService {
     }
 
     const updatedInterpreter = await this.prisma.interpreter.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: {
         name: data.name ?? interpreter.name,
         email: data.email ?? interpreter.email,
@@ -116,5 +123,33 @@ export class InterpreterAuthService {
     });
 
     return updatedInterpreter;
+  }
+
+  // ✅ Accept interpreter
+  async acceptInterpreter(id: string) {
+    const interpreter = await this.prisma.interpreter.findUnique({ where: { id } });
+    if (!interpreter) throw new NotFoundException('Interpreter not found');
+    if (interpreter.status === 'ACCEPTED') throw new BadRequestException('Interpreter is already accepted');
+
+    const updated = await this.prisma.interpreter.update({
+      where: { id },
+      data: { status: 'ACCEPTED' },
+    });
+
+    return updated;
+  }
+
+  // ✅ Reject interpreter
+  async rejectInterpreter(id: string) {
+    const interpreter = await this.prisma.interpreter.findUnique({ where: { id } });
+    if (!interpreter) throw new NotFoundException('Interpreter not found');
+    if (interpreter.status === 'REJECTED') throw new BadRequestException('Interpreter is already rejected');
+
+    const updated = await this.prisma.interpreter.update({
+      where: { id },
+      data: { status: 'REJECTED' },
+    });
+
+    return updated;
   }
 }

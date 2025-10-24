@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { InterpreterService } from './interpreter.service';
 
 @Controller('interpreters')
@@ -17,27 +17,28 @@ export class InterpreterController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.interpreterService.findOne(+id);
+    return this.interpreterService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() data: any) {
-    return this.interpreterService.update(+id, data);
+    return this.interpreterService.update(id, data);
   }
+
   // ✅ Accept interpreter
   @Patch('accept/:id')
-  async acceptInterpreter(@Param('id', ParseIntPipe) id: number) {
+  async acceptInterpreter(@Param('id') id: string) {
     return this.interpreterService.acceptInterpreter(id);
   }
 
   // ✅ Reject interpreter
   @Patch('reject/:id')
-  async rejectInterpreter(@Param('id', ParseIntPipe) id: number) {
+  async rejectInterpreter(@Param('id') id: string) {
     return this.interpreterService.rejectInterpreter(id);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.interpreterService.remove(+id);
+    return this.interpreterService.remove(id);
   }
 }
