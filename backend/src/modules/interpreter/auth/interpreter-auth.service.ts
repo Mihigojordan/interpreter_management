@@ -47,20 +47,56 @@ export class InterpreterAuthService {
   }
 
   // Login interpreter
-  async login({ email, password }: { email: string; password: string }) {
-    const interpreter = await this.prisma.interpreter.findUnique({ where: { email } });
-    if (!interpreter) throw new UnauthorizedException('Interpreter not found');
+async login({ email, password }: { email: string; password: string }) {
+  const interpreter = await this.prisma.interpreter.findUnique({
+    where: { email },
+  });
 
-    const valid = await bcrypt.compare(password, interpreter.password);
-    if (!valid) throw new UnauthorizedException('Invalid credentials');
-
-    const token = this.jwtService.sign(
-      { id: interpreter.id, email: interpreter.email, name: interpreter.name },
-      { secret: process.env.JWT_SECRET, expiresIn: '7d' },
-    );
-
-    return { interpreter, token };
+  if (!interpreter) {
+    throw new UnauthorizedException('Interpreter not found');
   }
+
+  // Status checks
+  if (interpreter.status === 'PENDING') {
+    throw new UnauthorizedException('Your account is pending approval');
+  }
+
+  if (interpreter.status === 'REJECTED') {
+    throw new UnauthorizedException(
+      `Your account has been rejected. Reason: ${interpreter.reason || 'Not specified'}`
+    );
+  }
+
+  // Password validation
+  if (!interpreter.password) {
+    throw new UnauthorizedException('Password not set. Contact support.');
+  }
+
+  const valid = await bcrypt.compare(password, interpreter.password);
+  if (!valid) {
+    throw new UnauthorizedException('Invalid credentials');
+  }
+
+  const token = this.jwtService.sign(
+    { id: interpreter.id, email: interpreter.email, name: interpreter.name },
+    {
+      secret: process.env.JWT_SECRET,
+      expiresIn: '7d',
+    }
+  );
+
+  return {
+    message: 'Login successful',
+    interpreter: {
+      id: interpreter.id,
+      name: interpreter.name,
+      email: interpreter.email,
+      status: interpreter.status,
+      isOnline: interpreter.isOnline,
+    },
+    token,
+  };
+}
 
   // Get profile
   async getProfile(interpreterId: string) {

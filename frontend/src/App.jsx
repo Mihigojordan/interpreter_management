@@ -21,6 +21,8 @@ import UnlockScreen from "./pages/auth/admin/UnlockScreen";
 import InterpreterDashboard from "./pages/dashboard/InterpreterDashboard";
 import ReportDashboard from "./pages/dashboard/ReportManagement";
 import AbyTechLocations from "./pages/Location";
+import InterpreterLogin from "./pages/auth/interpreter/InterpreterLogin";
+import ProtectPrivateInterpreterRoute from "./components/protectors/ProtectPrivateInterpreterRoute";
 
 
 
@@ -40,7 +42,7 @@ const router = createBrowserRouter([
   
   {
     path:'/',
-    element: <ProtectPrivateAdminRoute><Outlet /></ProtectPrivateAdminRoute>,
+    element: <ProtectPrivateAdminRoute><Outlet context={{role:'admin'}} /></ProtectPrivateAdminRoute>,
     children:[
        { index: true, element: <Navigate to={'/dashboard'}></Navigate>},
        { 
@@ -58,10 +60,36 @@ const router = createBrowserRouter([
     ]
   },
   {
+    path:'/interpreter',
+    element: <ProtectPrivateInterpreterRoute><Outlet context={{role:'interpreter'}} /></ProtectPrivateInterpreterRoute>,
+    children:[
+       { index: true, element: <Navigate to={'/interpreter/dashboard'}></Navigate>},
+       { 
+        path: 'dashboard', 
+        element: <SuspenseWrapper><DashboardLayout /> </SuspenseWrapper>,
+        children:[
+          {index:true , element:<DashboardHome />},
+       
+          {path:'profile' , element:<AdminProfilePage />},
+          
+        ]
+       },
+
+    ]
+  },
+  {
     path: '/auth/admin/login',
     element: (
       <SuspenseWrapper>
         <AdminLogin />
+      </SuspenseWrapper>
+    ),
+  },
+  {
+    path: '/auth/interpreter/login',
+    element: (
+      <SuspenseWrapper>
+        <InterpreterLogin />
       </SuspenseWrapper>
     ),
   },

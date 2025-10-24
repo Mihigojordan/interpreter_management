@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect } from 'react';
 import {
   MapPin,
   Plane,
@@ -23,32 +24,12 @@ import {
   UserPlus,
   ChevronDown,
   ChevronRight,
-  Layers,
-  MapPinned,
-  Truck,
-  TruckIcon,
-  FlaskConical,
-  FishSymbol,
-  Database,
-  Droplet,
-  Beaker,
-  Microscope,
-  Egg,
-  Waves,
-  Soup,
-  MoveRight,
-  ClipboardCheck,
-  SoupIcon,
-  WheatIcon,
-  Milk,
-  ShoppingBag,
-  File,
-} from "lucide-react";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
-
-import useAdminAuth from "../../context/AdminAuthContext";
-import logo from '../../assets/tran.png'
-
+  Languages,
+} from 'lucide-react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import useAdminAuth from '../../context/AdminAuthContext';
+import useInterpreterAuth from '../../context/InterpreterAuthContext';
+import logo from '../../assets/tran.png';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -69,55 +50,86 @@ interface DropdownGroup {
   label: string;
   icon: React.ElementType;
   items: NavItem[];
+  allowedRoles?: string[];
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
-  const role = 'admin'
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+const Sidebar = ({ isOpen = true, onToggle, role }) => {
+  const [openDropdown, setOpenDropdown] = useState(null);
   const location = useLocation();
-  const adminAuth = useAdminAuth();
- 
-  const auth =  adminAuth ;
-  const user = auth.user;
   const navigate = useNavigate();
+  const { user: adminUser } = useAdminAuth();
+  const { user: interpreterUser } = useInterpreterAuth();
 
-  const toggleDropdown = (id: string) => {
+  const user = role === 'admin' ? adminUser : interpreterUser;
+
+  const toggleDropdown = (id) => {
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
+  const getNavlinks = (role) => {
+    const basePath = role === 'admin' ? '/admin/dashboard' : '/interpreter/dashboard';
 
-
-  const getNavlinks = (role: string): (NavItem | DropdownGroup)[] => {
-    const basePath = `/dashboard`;
-
-    return [
+    const navItems = [
       {
-        id: "dashboard",
-        label: "Dashboard Summary",
+        id: 'dashboard',
+        label: 'Dashboard Summary',
         icon: TrendingUp,
         path: basePath,
+        allowedRoles: ['admin', 'interpreter'],
       },
       {
-        id: "interpreter ",
-        label: "Interpreter Management",
-        icon: ShoppingBag,
-        path: `${basePath}/interpreter`,
-        
+        id: 'interpreter-management',
+        label: 'Interpreter Management',
+        icon: Languages,
+        path: `${basePath}/interpreters`,
+        allowedRoles: ['admin'],
       },
-      
+   
+      {
+        id: 'requests',
+        label: 'Interpretation Requests',
+        icon: Inbox,
+        path: `${basePath}/requests`,
+        allowedRoles: ['interpreter'],
+      },
+     
+    ];
 
+    return [
+      ...navItems,
+      {
+        id: 'admin-tools',
+        label: 'Admin Tools',
+        icon: Cog,
+        allowedRoles: ['admin'],
+        items: [
+          {
+            id: 'user-management',
+            label: 'User Management',
+            icon: UserPlus,
+            path: `${basePath}/users`,
+            allowedRoles: ['admin'],
+          },
+          {
+            id: 'reports',
+            label: 'Reports',
+            icon: ClipboardList,
+            path: `${basePath}/reports`,
+            allowedRoles: ['admin'],
+          },
+        ],
+      },
     ];
   };
 
-
-  const filterNavItems = (items: (NavItem | DropdownGroup)[]): (NavItem | DropdownGroup)[] => {
+  const filterNavItems = (items) => {
     return items
       .map((item) => {
-        if ("items" in item) {
+        if ('items' in item) {
           const filteredItems = item.items.filter(
             (subItem) => !subItem.allowedRoles || subItem.allowedRoles.includes(role)
           );
-          if (filteredItems.length === 0) return null;
+          if (filteredItems.length === 0 || (item.allowedRoles && !item.allowedRoles.includes(role))) return null;
           return { ...item, items: filteredItems };
         }
         if (!item.allowedRoles || item.allowedRoles.includes(role)) {
@@ -125,7 +137,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
         }
         return null;
       })
-      .filter((item): item is NavItem | DropdownGroup => item !== null);
+      .filter((item) => item !== null);
   };
 
   const navlinks = filterNavItems(getNavlinks(role));
@@ -134,7 +146,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
   useEffect(() => {
     const currentPath = location.pathname;
     for (const item of navlinks) {
-      if ("items" in item) {
+      if ('items' in item) {
         const hasActiveChild = item.items.some((subItem) => currentPath === subItem.path);
         if (hasActiveChild) {
           setOpenDropdown(item.id);
@@ -142,7 +154,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
         }
       }
     }
-  }, [location.pathname]);
+  }, [location.pathname, navlinks]);
 
   const getProfileRoute = () => `/${role}/dashboard/profile`;
 
@@ -152,23 +164,23 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
   };
 
   const displayName =
-    role === "admin"
-      ? user?.adminName || "Admin User"
-      : `${user?.first_name || ""} ${user?.last_name || ""}`.trim() || "Employee User";
+    role === 'admin'
+      ? adminUser?.adminName || 'Admin User'
+      : interpreterUser?.name || 'Interpreter User';
 
   const displayEmail =
-    role === "admin"
-      ? user?.adminEmail || "admin@example.com"
-      : user?.email || "employee@example.com";
+    role === 'admin'
+      ? adminUser?.adminEmail || 'admin@example.com'
+      : interpreterUser?.email || 'interpreter@example.com';
 
   const portalTitle = `${role.charAt(0).toUpperCase() + role.slice(1)} Portal`;
 
-  const isDropdownActive = (dropdown: DropdownGroup) => {
+  const isDropdownActive = (dropdown) => {
     const currentPath = location.pathname;
     return dropdown.items.some((item) => currentPath === item.path);
   };
 
-  const renderMenuItem = (item: NavItem) => {
+  const renderMenuItem = (item) => {
     const Icon = item.icon;
 
     return (
@@ -177,9 +189,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
         to={item.path}
         end
         className={({ isActive }) =>
-          `w-full flex items-center space-x-2 px-2 py-2 rounded-lg transition-all duration-200 group border-l-4 ${isActive
-            ? "bg-primary-500/10 text-primary-700 border-primary-500"
-            : "text-gray-700 hover:bg-gray-50 border-transparent"
+          `w-full flex items-center space-x-2 px-2 py-2 rounded-lg transition-all duration-200 group border-l-4 ${
+            isActive
+              ? 'bg-primary-500/10 text-primary-700 border-primary-500'
+              : 'text-gray-700 hover:bg-gray-50 border-transparent'
           }`
         }
         onClick={() => {
@@ -188,7 +201,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
       >
         {({ isActive }) => (
           <>
-            <div className={`p-1 rounded-md ${isActive ? "bg-primary-500 text-white" : "bg-gray-100 text-gray-600"}`}>
+            <div className={`p-1 rounded-md ${isActive ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
               <Icon className="w-4 h-4" />
             </div>
             <span className="text-sm font-medium">{item.label}</span>
@@ -198,7 +211,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
     );
   };
 
-  const renderDropdown = (dropdown: DropdownGroup) => {
+  const renderDropdown = (dropdown) => {
     const Icon = dropdown.icon;
     const isOpen = openDropdown === dropdown.id;
     const hasActiveChild = isDropdownActive(dropdown);
@@ -207,25 +220,28 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
       <div key={dropdown.id} className="w-full">
         <button
           onClick={() => toggleDropdown(dropdown.id)}
-          className={`w-full flex items-center justify-between px-2 py-2 rounded-lg transition-all duration-200 ${hasActiveChild
-            ? "bg-primary-500/10 text-primary-700 border-l-4 border-primary-500"
-            : "text-gray-700 hover:bg-gray-50 border-l-4 border-transparent"
-            }`}
+          className={`w-full flex items-center justify-between px-2 py-2 rounded-lg transition-all duration-200 ${
+            hasActiveChild
+              ? 'bg-primary-500/10 text-primary-700 border-l-4 border-primary-500'
+              : 'text-gray-700 hover:bg-gray-50 border-l-4 border-transparent'
+          }`}
         >
           <div className="flex items-center space-x-2">
-            <div className={`p-1 rounded-md ${hasActiveChild ? "bg-primary-500 text-white" : "bg-gray-100 text-gray-600"}`}>
+            <div className={`p-1 rounded-md ${hasActiveChild ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
               <Icon className="w-4 h-4" />
             </div>
             <span className="text-sm font-medium">{dropdown.label}</span>
           </div>
           <ChevronDown
-            className={`w-4 h-4 transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"
-              } ${hasActiveChild ? "text-primary-600" : "text-gray-400"}`}
+            className={`w-4 h-4 transition-transform duration-300 ${
+              isOpen ? 'rotate-180' : 'rotate-0'
+            } ${hasActiveChild ? 'text-primary-600' : 'text-gray-400'}`}
           />
         </button>
         <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"
-            }`}
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            isOpen ? 'max-h-96 opacity-100 mt-1' : 'max-h-0 opacity-0'
+          }`}
         >
           <div className="ml-4 space-y-0.5 border-l-2 border-primary-100 pl-3 py-0.5">
             {dropdown.items.map((item) => {
@@ -236,9 +252,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
                   to={item.path}
                   end
                   className={({ isActive }) =>
-                    `w-full flex items-center space-x-2 px-2 py-1.5 rounded-md transition-all duration-200 group relative ${isActive
-                      ? "bg-primary-500 text-white shadow-sm"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    `w-full flex items-center space-x-2 px-2 py-1.5 rounded-md transition-all duration-200 group relative ${
+                      isActive ? 'bg-primary-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     }`
                   }
                   onClick={() => {
@@ -275,25 +290,23 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
 
       {/* Sidebar Container */}
       <div
-        className={`fixed left-0 top-0 min-h-screen bg-white flex flex-col border-r border-primary-200 shadow-lg transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
-          } w-72`}
+        className={`fixed left-0 top-0 min-h-screen bg-white flex flex-col border-r border-primary-200 shadow-lg transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } w-72`}
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-3 border-b border-primary-200">
           <div className="flex items-center space-x-2">
-            <img src={logo} className="flex items-center justify-center w-10 h-10  rounded-lg" />
-             
-            
+            <img src={logo} alt="ABYTECH-HUB LTD" className="w-10 h-10 rounded-lg" />
             <div>
-              <h2 className="font-bold text-base text-primary-800">
-                ABYTECH-HUB  LTD 
-              </h2>
+              <h2 className="font-bold text-base text-primary-800">ABYTECH-HUB LTD</h2>
               <p className="text-xs text-primary-500">{portalTitle}</p>
             </div>
           </div>
           <button
             onClick={onToggle}
             className="lg:hidden p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="Close sidebar"
           >
             <X className="w-4 h-4 text-gray-500" />
           </button>
@@ -304,7 +317,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
           <nav className="space-y-0.5">
             {navlinks.length > 0 ? (
               navlinks.map((item) => {
-                if ("items" in item) {
+                if ('items' in item) {
                   return renderDropdown(item);
                 }
                 return renderMenuItem(item);
@@ -327,12 +340,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle, }) => {
               <User className="w-4 h-4 text-primary-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-normal text-gray-900 truncate">
-                {displayName}
-              </p>
-              <p className="text-xs text-gray-500 truncate">
-                {displayEmail}
-              </p>
+              <p className="text-xs font-normal text-gray-900 truncate">{displayName}</p>
+              <p className="text-xs text-gray-500 truncate">{displayEmail}</p>
             </div>
           </div>
         </div>

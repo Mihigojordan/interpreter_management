@@ -488,7 +488,7 @@ const InterpreterDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
       <div className="sticky top-0 bg-white shadow-md z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className=" mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <motion.button
@@ -522,7 +522,7 @@ const InterpreterDashboard = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <div className=" mx-auto px-4 py-6 space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { title: 'Total Interpreters', count: totalInterpreters, color: 'primary-600', icon: Settings },
