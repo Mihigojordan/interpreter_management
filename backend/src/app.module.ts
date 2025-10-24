@@ -6,14 +6,17 @@ import { EmailModule } from './global/email/email.module';
 
 import { DriveModule } from './global/googleDriveService/driver.module';
 import { InterpreterRequestsModule } from './modules/interepeter-request/interpreter-requests.module';
+import { InterpreterModule } from './modules/interpreter/interpreter.module';
 
 @Module({
   imports: [
+    EmailModule,
     AdminModule,
     PrismaModule,
     DriveModule,
-    InterpreterRequestsModule
+    InterpreterRequestsModule,
     
+    InterpreterModule
   ],
   controllers: [AppController],
 })
