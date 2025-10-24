@@ -20,30 +20,25 @@ CREATE TABLE `Admin` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Expense` (
-    `id` VARCHAR(191) NOT NULL,
-    `title` VARCHAR(191) NOT NULL,
-    `amount` DOUBLE NOT NULL,
-    `description` VARCHAR(191) NULL,
-    `adminId` VARCHAR(191) NOT NULL,
+CREATE TABLE `InterpreterRequest` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `fullName` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NOT NULL,
+    `preferredContactMethod` VARCHAR(191) NOT NULL,
+    `languageFrom` VARCHAR(191) NOT NULL,
+    `languageTo` VARCHAR(191) NOT NULL,
+    `serviceType` VARCHAR(191) NOT NULL,
+    `dateTime` DATETIME(3) NOT NULL,
+    `location` VARCHAR(191) NOT NULL,
+    `durationMinutes` INTEGER NOT NULL,
+    `interpreterType` VARCHAR(191) NOT NULL,
+    `specialRequirements` VARCHAR(191) NULL,
+    `reason` VARCHAR(191) NOT NULL,
+    `urgencyLevel` VARCHAR(191) NOT NULL,
+    `additionalNotes` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Report` (
-    `id` VARCHAR(191) NOT NULL,
-    `title` VARCHAR(191) NOT NULL,
-    `reportUrl` VARCHAR(191) NOT NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `adminId` VARCHAR(191) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- AddForeignKey
-ALTER TABLE `Expense` ADD CONSTRAINT `Expense_adminId_fkey` FOREIGN KEY (`adminId`) REFERENCES `Admin`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Report` ADD CONSTRAINT `Report_adminId_fkey` FOREIGN KEY (`adminId`) REFERENCES `Admin`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

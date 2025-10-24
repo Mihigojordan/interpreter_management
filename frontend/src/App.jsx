@@ -42,7 +42,7 @@ const router = createBrowserRouter([
     path:'/',
     element: <ProtectPrivateAdminRoute><Outlet /></ProtectPrivateAdminRoute>,
     children:[
-       { index: true, element: <Navigate to={'/admin/dashboard'}></Navigate>},
+       { index: true, element: <Navigate to={'/dashboard'}></Navigate>},
        { 
         path: 'dashboard', 
         element: <SuspenseWrapper><DashboardLayout /> </SuspenseWrapper>,
