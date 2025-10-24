@@ -18,7 +18,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import DashboardHome from "./pages/dashboard/DashboardHome";
 import AdminProfilePage from "./pages/dashboard/AdminProfile";
 import UnlockScreen from "./pages/auth/admin/UnlockScreen";
-import ExpenseDashboard from "./pages/dashboard/ExpenseDashboard";
+import InterpreterDashboard from "./pages/dashboard/InterpreterDashboard";
 import ReportDashboard from "./pages/dashboard/ReportManagement";
 import AbyTechLocations from "./pages/Location";
 
@@ -42,13 +42,13 @@ const router = createBrowserRouter([
     path:'/',
     element: <ProtectPrivateAdminRoute><Outlet /></ProtectPrivateAdminRoute>,
     children:[
-       { index: true, element: <Navigate to={'/admin/dashboard'}></Navigate>},
+       { index: true, element: <Navigate to={'/dashboard'}></Navigate>},
        { 
         path: 'dashboard', 
         element: <SuspenseWrapper><DashboardLayout /> </SuspenseWrapper>,
         children:[
           {index:true , element:<DashboardHome />},
-          {path:'expense' , element:<ExpenseDashboard />},
+          {path:'interpreter' , element:<InterpreterDashboard />},
           {path:'report' , element:<ReportDashboard />},
           {path:'profile' , element:<AdminProfilePage />},
           

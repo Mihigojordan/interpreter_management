@@ -123,27 +123,31 @@ export class InterpreterService {
     return updated;
   }
 
-  // ✅ Reject interpreter
-  async rejectInterpreter(id: string) {
-    const interpreter = await this.prisma.interpreter.findUnique({ where: { id } });
-    if (!interpreter) throw new NotFoundException('Interpreter not found');
-    if (interpreter.status === 'REJECTED') throw new BadRequestException('Interpreter is already rejected');
+// ✅ Reject interpreter with reason
+async rejectInterpreter(id: string, reason: string) {
+  const interpreter = await this.prisma.interpreter.findUnique({ where: { id } });
+  if (!interpreter) throw new NotFoundException('Interpreter not found');
+  if (interpreter.status === 'REJECTED') throw new BadRequestException('Interpreter is already rejected');
 
-    const updated = await this.prisma.interpreter.update({
-      where: { id },
-      data: { status: 'REJECTED' },
-    });
+  const updated = await this.prisma.interpreter.update({
+    where: { id },
+    data: { status: 'REJECTED', reason },
+  });
 
-    // // Optionally send email
-    // await this.email.sendEmail(
-    //   updated.email,
-    //   'Your account has been rejected',
-    //   'InterpreterRejection',
-    //   { firstName: updated.name.split(' ')[0], status: 'REJECTED' },
-    // );
+  // Send rejection email with reason
+  await this.email.sendEmail(
+    updated.email,
+    'Your account has been rejected',
+    'InterpreterRejection',
+    {
+      firstName: updated.name.split(' ')[0],
+      status: 'REJECTED',
+      reason,
+    },
+  );
 
-    return updated;
-  }
+  return updated;
+}
 
   // ✅ Delete interpreter
   async remove(id: string) {
