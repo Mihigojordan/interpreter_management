@@ -23,6 +23,7 @@ import ReportDashboard from "./pages/dashboard/ReportManagement";
 import AbyTechLocations from "./pages/Location";
 import InterpreterLogin from "./pages/auth/interpreter/InterpreterLogin";
 import ProtectPrivateInterpreterRoute from "./components/protectors/ProtectPrivateInterpreterRoute";
+import InterpreterProfilePage from "./pages/dashboard/InterpreterProfilePage";
 
 
 
@@ -70,7 +71,7 @@ const router = createBrowserRouter([
         children:[
           {index:true , element:<DashboardHome />},
        
-          {path:'profile' , element:<AdminProfilePage />},
+          {path:'profile' , element:<InterpreterProfilePage />},
           
         ]
        },

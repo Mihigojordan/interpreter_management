@@ -68,7 +68,9 @@ export class InterpreterAuthController {
 
   @Put('edit-profile/:id')
   @UseGuards(InterpreterAuthGuard)
+  
   async update(@Param('id') id: string, @Body() body: any) {
+
     return await this.authService.editProfile(id, body);
   }
 

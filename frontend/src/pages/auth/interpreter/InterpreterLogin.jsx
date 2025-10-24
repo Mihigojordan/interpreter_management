@@ -169,7 +169,7 @@ const InterpreterLogin = () => {
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-3 top-2/3 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   id="email"
                   name="email"
@@ -182,10 +182,10 @@ const InterpreterLogin = () => {
                   }`}
                   placeholder="interpreter@example.com"
                 />
+              </div>
                 {errors.email && touched.email && (
                   <p className="mt-1 text-xs text-red-600">{errors.email}</p>
                 )}
-              </div>
             </div>
 
             <div>
@@ -193,7 +193,7 @@ const InterpreterLogin = () => {
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-2/3 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   id="password"
                   name="password"
@@ -209,7 +209,7 @@ const InterpreterLogin = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-3 top-2/3 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>

@@ -67,7 +67,7 @@ const Sidebar = ({ isOpen = true, onToggle, role }) => {
   };
 
   const getNavlinks = (role) => {
-    const basePath = role === 'admin' ? '/admin/dashboard' : '/interpreter/dashboard';
+    const basePath = role === 'admin' ? '/dashboard' : '/interpreter/dashboard';
 
     const navItems = [
       {
@@ -81,7 +81,7 @@ const Sidebar = ({ isOpen = true, onToggle, role }) => {
         id: 'interpreter-management',
         label: 'Interpreter Management',
         icon: Languages,
-        path: `${basePath}/interpreters`,
+        path: `${basePath}/interpreter`,
         allowedRoles: ['admin'],
       },
    
