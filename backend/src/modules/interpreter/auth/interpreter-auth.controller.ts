@@ -4,6 +4,7 @@ import {
   Post,
   Get,
   Put,
+  Patch,
   Req,
   Res,
   UseGuards,
@@ -50,7 +51,12 @@ export class InterpreterAuthController {
 
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('AccessInterpreterToken', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', path: '/' });
+    res.clearCookie('AccessInterpreterToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      path: '/',
+    });
     return { message: 'Logged out successfully' };
   }
 
@@ -65,4 +71,6 @@ export class InterpreterAuthController {
   async update(@Param('id') id: string, @Body() body: any) {
     return await this.authService.editProfile(id, body);
   }
+
+
 }

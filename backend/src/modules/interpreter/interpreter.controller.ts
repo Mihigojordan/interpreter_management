@@ -33,8 +33,8 @@ export class InterpreterController {
 
   // ✅ Reject interpreter
   @Patch('reject/:id')
-  async rejectInterpreter(@Param('id') id: string) {
-    return this.interpreterService.rejectInterpreter(id);
+  async rejectInterpreter(@Param('id') id: string,@Body() data: any) {
+    return this.interpreterService.rejectInterpreter(id,data.reason);
   }
 
   @Delete(':id')
