@@ -112,33 +112,31 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="flex h-screen w-full flex-row-reverse overflow-hidden bg-white">
-      {/* Left Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 bg-gradient-to-br from-gray-50 to-white relative">
-        {/* Decorative elements */}
-        <div className="absolute top-10 right-10 w-32 h-32 bg-blue-100 rounded-full blur-2xl opacity-50"></div>
-        <div className="absolute bottom-10 left-10 w-40 h-40 bg-purple-100 rounded-full blur-3xl opacity-40"></div>
-        
-        <div className="w-full max-w-xl relative z-10" data-aos="zoom-in">
-          {/* Logo and Header */}
-          <div className="text-center mb-8">
-            {/* <div className="flex items-center justify-center mb-4">
-              <img src={Logo} alt="Fine Fish Logo" className="h-16" />
-            </div> */}
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-            <p className="text-gray-600">Sign in to access your admin dashboard</p>
+    <div className="flex h-screen w-full items-center justify-center overflow-hidden bg-gradient-to-br from-[#f28c3a] to-[#2b6c5a] relative">
+      {/* Decorative elements */}
+      <div className="absolute top-10 right-10 w-32 h-32 bg-white/20 rounded-full blur-3xl opacity-50"></div>
+      <div className="absolute bottom-10 left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl opacity-40"></div>
+
+      <div
+        className="w-full max-w-xl px-8 relative z-10 bg-white/90 backdrop-blur-md shadow-2xl p-4 rounded-2xl"
+        data-aos="zoom-in"
+      >
+        {/* Logo and Header */}
+        <div className="text-center -mb-4">
+          <div className="flex items-center justify-center mb-4">
+            <img src={Logo} alt="Fine Fish Logo" className="h-20 object-contain" />
           </div>
+          <p className="text-gray-600">Sign in to access your admin dashboard</p>
+        </div>
 
-          {/* Error message */}
-          {errors.general && (
-            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm">
-              <p className="text-red-700 text-sm font-medium flex items-center">
-                <span className="mr-2">⚠️</span> {errors.general}
-              </p>
-            </div>
-          )}
-
-         
+        {/* Error message */}
+        {errors.general && (
+          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm">
+            <p className="text-red-700 text-sm font-medium flex items-center">
+              <span className="mr-2">⚠️</span> {errors.general}
+            </p>
+          </div>
+        )}
 
         {/* Login Form */}
         <div className="p-8">
@@ -224,42 +222,22 @@ const AdminLogin = () => {
               </button>
             </div>
 
-              {/* Submit Button */}
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={isLoading || authLoading || !isFormValid()}
-                className="w-full bg-gradient-to-r from-purple-900 via-blue-900 to-purple-800 text-white py-3 rounded-lg font-semibold hover:from-purple-800 hover:via-blue-800 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
-              >
-                {isLoading || authLoading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  'Sign In'
-                )}
-              </button>
-
-              {/* Divider */}
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500 font-medium">OR</span>
-                </div>
-              </div>
-
-             
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="text-center text-sm text-gray-600 mt-6">
-            Need access?{' '}
-            <button className="text-blue-600 hover:text-blue-700 font-medium">
-              Contact Administrator
+            {/* Submit Button */}
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={isLoading || authLoading || !isFormValid()}
+              style={{backgroundColor:"#f28c3a"}}
+              className="w-full bg-[#f28c3a]  text-white py-3 rounded-lg font-semibold  hover:to-[#357f6b] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+            >
+              {isLoading || authLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                'Sign In'
+              )}
             </button>
           </div>
         </div>
