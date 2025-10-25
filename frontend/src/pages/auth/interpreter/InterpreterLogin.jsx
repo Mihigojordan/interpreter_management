@@ -3,6 +3,8 @@ import { Lock, Mail, Eye, EyeOff, Languages, Shield, CheckCircle } from 'lucide-
 import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import useInterpreterAuth from '../../../context/InterpreterAuthContext';
+import Logo from '../../../assets/tran.png';
+
 
 
 
@@ -130,9 +132,9 @@ const InterpreterLogin = () => {
         <div className="w-full max-w-md space-y-8">
           {/* Logo and Header */}
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
-              <Languages className="w-8 h-8 text-white" />
-            </div>
+            <div className="flex items-center justify-center mb-4">
+                       <img src={Logo} alt="Fine Fish Logo" className="h-20 object-contain" />
+                     </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Interpreter Portal
             </h1>
@@ -141,17 +143,7 @@ const InterpreterLogin = () => {
             </p>
           </div>
 
-          {/* Features */}
-          <div className="grid grid-cols-1 gap-3 py-4">
-            <div className="flex items-center gap-3 text-sm text-gray-700">
-              <Shield className="w-5 h-5 text-blue-600" />
-              <span>Fully verified and authenticated</span>
-            </div>
-            <div className="flex items-center gap-3 text-sm text-gray-700">
-              <CheckCircle className="w-5 h-5 text-blue-600" />
-              <span>Status-based workflow management</span>
-            </div>
-          </div>
+
 
           {/* Login Form */}
           <div className="space-y-6">
@@ -177,7 +169,7 @@ const InterpreterLogin = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   onBlur={handleBlur}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none ${
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none ${
                     errors.email && touched.email ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder="interpreter@example.com"
@@ -201,7 +193,7 @@ const InterpreterLogin = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   onBlur={handleBlur}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none ${
+                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none ${
                     errors.password && touched.password ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder="Enter your password"
@@ -223,11 +215,11 @@ const InterpreterLogin = () => {
               <label className="flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                 />
                 <span className="ml-2 text-sm text-gray-700">Remember me</span>
               </label>
-              <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+              <button className="text-sm text-primary-600 hover:text-primary-700 font-medium">
                 Forgot password?
               </button>
             </div>
@@ -236,7 +228,8 @@ const InterpreterLogin = () => {
               whileHover={{ scale: 1.05 }}
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              style={{backgroundColor:"#f28c3a"}}
+              className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -249,13 +242,6 @@ const InterpreterLogin = () => {
             </motion.button>
           </div>
 
-          {/* Footer */}
-          <div className="text-center text-sm text-gray-600">
-            Need access?{' '}
-            <button className="text-blue-600 hover:text-blue-700 font-medium">
-              Contact Administrator
-            </button>
-          </div>
         </div>
       </div>
 
