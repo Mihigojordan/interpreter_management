@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `interpreter` ADD COLUMN `cvUrl` VARCHAR(191) NULL,
+    ADD COLUMN `supportingFile` VARCHAR(191) NULL,
+    ADD COLUMN `type` ENUM('PRO', 'VOLUNTEER') NOT NULL DEFAULT 'VOLUNTEER';

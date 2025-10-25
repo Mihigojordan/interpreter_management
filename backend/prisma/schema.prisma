@@ -67,8 +67,18 @@ model Interpreter {
   name      String
   email     String    @unique
   phone     String    @unique
+
+
+  type      Type    @default(VOLUNTEER)
+
+  // files
   photoUrl  String?
+  supportingFile String?
+  cvUrl String?
+
+  //array
   languages Json
+
   country   String
   password  String?
   status    Status    @default(PENDING)
@@ -78,6 +88,11 @@ model Interpreter {
   updatedAt DateTime  @updatedAt
 
   InterpreterRequest InterpreterRequest[]
+}
+
+enum Type{
+  PRO
+  VOLUNTEER
 }
 
 enum Status {

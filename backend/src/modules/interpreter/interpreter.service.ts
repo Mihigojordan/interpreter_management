@@ -4,13 +4,14 @@ import { randomBytes } from 'crypto';
 import * as bcrypt from 'bcryptjs';
 import { EmailService } from 'src/global/email/email.service';
 import { last } from 'rxjs';
+import { deleteFile } from 'src/common/utils/file-upload.utils';
 
 @Injectable()
 export class InterpreterService {
   constructor(
     private prisma: PrismaService,
     private email: EmailService,
-  ) {}
+  ) { }
 
   // 🔐 Generate random plain password
   private generatePassword(length = 10): string {
@@ -50,9 +51,6 @@ export class InterpreterService {
   async create(data: any) {
     this.validateInterpreterData(data);
 
-  
-
-   
     return this.prisma.interpreter.create({ data });
   }
 
@@ -75,7 +73,20 @@ export class InterpreterService {
     const interpreter = await this.prisma.interpreter.findUnique({ where: { id } });
     if (!interpreter) throw new NotFoundException('Interpreter not found');
 
-    return this.prisma.interpreter.update({ where: { id }, data });
+    const updatedInterpreter = await this.prisma.interpreter.update({ where: { id }, data });
+
+    if (data.photoUrl && interpreter.photoUrl && data.photoUrl !== interpreter.photoUrl) {
+      deleteFile(interpreter.photoUrl);
+    }
+    else if (data.cvUrl && interpreter.cvUrl && data.cvUrl !== interpreter.cvUrl) {
+      deleteFile(interpreter.cvUrl);
+    }
+    else if (data.supportingFile && interpreter.supportingFile && data.supportingFile !== interpreter.supportingFile) {
+      deleteFile(interpreter.supportingFile);
+    }
+
+    return updatedInterpreter;
+
   }
 
   // ✅ Accept interpreter
@@ -85,31 +96,31 @@ export class InterpreterService {
     if (interpreter.status === 'ACCEPTED') throw new BadRequestException('Interpreter is already accepted');
 
     // Generate & hash password
-  const plainPassword = this.generatePassword();
-  const hashedPassword = await this.hashPassword(plainPassword);
+    const plainPassword = this.generatePassword();
+    const hashedPassword = await this.hashPassword(plainPassword);
     const updated = await this.prisma.interpreter.update({
       where: { id },
-      data: { status: 'ACCEPTED' ,password: hashedPassword},
+      data: { status: 'ACCEPTED', password: hashedPassword },
     });
 
 
-        // Optionally send email
-   await this.email.sendEmail(
-  updated.email,
-  'Your account has been approved',
-  'InterpreterApproval',
-  {
-    firstName: updated.name,
-    status: 'ACCEPTED',
-    year: new Date().getFullYear(),
-  },
-);
+    // Optionally send email
+    await this.email.sendEmail(
+      updated.email,
+      'Your account has been approved',
+      'InterpreterApproval',
+      {
+        firstName: updated.name,
+        status: 'ACCEPTED',
+        year: new Date().getFullYear(),
+      },
+    );
 
     // Check for duplicate email
     if (interpreter.email) {
 
       // Send email with generated password
-        await this.email.sendEmail(
+      await this.email.sendEmail(
         interpreter.email,
         'Your Interpreter Account Created',
         'Welcome-User-notification',
@@ -129,34 +140,34 @@ export class InterpreterService {
     return updated;
   }
 
-// ✅ Reject interpreter with reason
-async rejectInterpreter(id: string, reason: string) {
-  const interpreter = await this.prisma.interpreter.findUnique({ where: { id } });
-  if (!interpreter) throw new NotFoundException('Interpreter not found');
-  if (!reason) throw new NotFoundException('Required rejection reason');
-  if (interpreter.status === 'REJECTED') throw new BadRequestException('Interpreter is already rejected');
+  // ✅ Reject interpreter with reason
+  async rejectInterpreter(id: string, reason: string) {
+    const interpreter = await this.prisma.interpreter.findUnique({ where: { id } });
+    if (!interpreter) throw new NotFoundException('Interpreter not found');
+    if (!reason) throw new NotFoundException('Required rejection reason');
+    if (interpreter.status === 'REJECTED') throw new BadRequestException('Interpreter is already rejected');
 
-  const updated = await this.prisma.interpreter.update({
-    where: { id },
-    data: { status: 'REJECTED', reason },
-  });
+    const updated = await this.prisma.interpreter.update({
+      where: { id },
+      data: { status: 'REJECTED', reason },
+    });
 
-  // Send rejection email with reason
-  await this.email.sendEmail(
-  updated.email,
-  'Your account has been rejected',
-  'InterpreterRejection',
-  {
-    firstName: updated.name.split(' ')[0],
-    status: 'REJECTED',
-    reason,
-    year: new Date().getFullYear(),
-  },
-);
+    // Send rejection email with reason
+    await this.email.sendEmail(
+      updated.email,
+      'Your account has been rejected',
+      'InterpreterRejection',
+      {
+        firstName: updated.name.split(' ')[0],
+        status: 'REJECTED',
+        reason,
+        year: new Date().getFullYear(),
+      },
+    );
 
 
-  return updated;
-}
+    return updated;
+  }
 
   // ✅ Delete interpreter
   async remove(id: string) {
