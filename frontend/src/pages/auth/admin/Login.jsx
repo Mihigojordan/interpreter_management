@@ -1,44 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { Eye, EyeOff, Users, Building2, Shield, Zap, CheckCircle2, Lock, Mail } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useAdminAuth from '../../../context/AdminAuthContext';
-import Logo from '../../../assets/trans.png';
+import Logo from '../../../assets/tran.png';
 
 const AdminLogin = () => {
-  const { login, loginWithGoogle, isLoading: authLoading, isAuthenticated } = useAdminAuth();
+  const { login, isLoading: authLoading, isAuthenticated } = useAdminAuth();
 
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [currentSlide, setCurrentSlide] = useState(0);
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  const slides = [
-    {
-      image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=2070&auto=format&fit=crop',
-      title: 'Empowering People with Fine Fish',
-      subtitle: 'Simplify workforce management and empower growth'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80',
-      title: 'Seamless Team Collaboration',
-      subtitle: 'Foster harmony across your organization'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1200&q=80',
-      title: 'Advanced Admin Control',
-      subtitle: 'Powerful tools for modern management'
-    }
-  ];
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: true, easing: 'ease-in-out' });
@@ -47,13 +25,6 @@ const AdminLogin = () => {
       navigate(from);
     }
   }, [isAuthenticated, authLoading, location, navigate]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   const validateEmail = (email) => {
     if (!email) return 'Email is required';
@@ -107,10 +78,7 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setTouched({
-      email: true,
-      password: true,
-    });
+    setTouched({ email: true, password: true });
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -135,16 +103,6 @@ const AdminLogin = () => {
         general: error.message || 'An error occurred during login. Please try again.',
       });
     } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = () => {
-    setIsLoading(true);
-    try {
-      loginWithGoogle(false);
-    } catch (error) {
-      setErrors({ general: 'Google login failed. Please try again.' });
       setIsLoading(false);
     }
   };
@@ -182,89 +140,89 @@ const AdminLogin = () => {
 
          
 
-          {/* Login Form */}
-          <div className="    p-8 ">
-            <div className="space-y-6">
-              {/* Email Field */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-2/3 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg transition-all duration-200 outline-none ${
-                      errors.email
-                        ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20'
-                        : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
-                    }`}
-                    placeholder="admin@example.com"
-                    disabled={isLoading || authLoading}
-                  />
-                </div>
-                {errors.email && touched.email && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center">
-                    <span className="mr-1">⚠</span> {errors.email}
-                  </p>
-                )}
+        {/* Login Form */}
+        <div className="p-8">
+          <div className="space-y-6">
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-2/3 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg transition-all duration-200 outline-none ${
+                    errors.email
+                      ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20'
+                      : 'border-gray-300 focus:border-[#2b6c5a] focus:ring-2 focus:ring-[#2b6c5a]/20'
+                  }`}
+                  placeholder="admin@example.com"
+                  disabled={isLoading || authLoading}
+                />
               </div>
+              {errors.email && touched.email && (
+                <p className="mt-2 text-sm text-red-600 flex items-center">
+                  <span className="mr-1">⚠</span> {errors.email}
+                </p>
+              )}
+            </div>
 
-              {/* Password Field */}
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-2/3 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    className={`w-full pl-10 pr-12 py-3 border-2 rounded-lg transition-all duration-200 outline-none ${
-                      errors.password
-                        ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20'
-                        : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
-                    }`}
-                    placeholder="Enter your password"
-                    disabled={isLoading || authLoading}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2/3 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
-                    disabled={isLoading || authLoading}
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
-                {errors.password && touched.password && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center">
-                    <span className="mr-1">⚠</span> {errors.password}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between">
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">Remember me</span>
-                </label>
-                <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                  Forgot password?
+            {/* Password Field */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-2/3 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  className={`w-full pl-10 pr-12 py-3 border-2 rounded-lg transition-all duration-200 outline-none ${
+                    errors.password
+                      ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20'
+                      : 'border-gray-300 focus:border-[#f28c3a] focus:ring-2 focus:ring-[#f28c3a]/20'
+                  }`}
+                  placeholder="Enter your password"
+                  disabled={isLoading || authLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-2/3 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
+                  disabled={isLoading || authLoading}
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+              {errors.password && touched.password && (
+                <p className="mt-2 text-sm text-red-600 flex items-center">
+                  <span className="mr-1">⚠</span> {errors.password}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 text-[#2b6c5a] border-gray-300 rounded focus:ring-[#2b6c5a]"
+                />
+                <span className="ml-2 text-sm text-gray-700">Remember me</span>
+              </label>
+              <button className="text-sm text-[#2b6c5a] hover:text-[#f28c3a] font-medium">
+                Forgot password?
+              </button>
+            </div>
 
               {/* Submit Button */}
               <button
@@ -305,64 +263,6 @@ const AdminLogin = () => {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Right Side - Background Slideshow */}
-      <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-gray-900">
-        {slides.map((slide, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            <img
-              src={slide.image}
-              alt={slide.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-900/95 via-blue-900/90 to-purple-800/95" />
-            
-            {/* Animated Background Elements */}
-            <div className="absolute top-20 right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-20 left-20 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-            
-            {/* Content Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
-              <div className="mb-6 flex justify-start gap-3">
-                <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30 shadow-lg">
-                  <Users className="w-7 h-7 text-white" />
-                </div>
-                <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30 shadow-lg">
-                  <Building2 className="w-7 h-7 text-white" />
-                </div>
-                <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30 shadow-lg">
-                  <Zap className="w-7 h-7 text-white" />
-                </div>
-              </div>
-              
-              <h2 className="text-4xl font-bold mb-4">
-                {slide.title}
-              </h2>
-              <p className="text-xl text-gray-200 mb-8">
-                {slide.subtitle}
-              </p>
-              
-              {/* Slide Indicators */}
-              <div className="flex gap-2">
-                {slides.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentSlide(idx)}
-                    className={`h-1 rounded-full transition-all duration-300 ${
-                      idx === currentSlide ? 'w-8 bg-white' : 'w-6 bg-white/40'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );

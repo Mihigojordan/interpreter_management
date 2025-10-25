@@ -3,6 +3,8 @@ import { Lock, Mail, Eye, EyeOff, Languages, Shield, CheckCircle } from 'lucide-
 import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import useInterpreterAuth from '../../../context/InterpreterAuthContext';
+import Logo from '../../../assets/tran.png';
+
 
 
 
@@ -130,28 +132,18 @@ const InterpreterLogin = () => {
         <div className="w-full max-w-md space-y-8">
           {/* Logo and Header */}
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
-              <Languages className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <div className="flex items-center justify-center mb-4">
+                       <img src={Logo} alt="Fine Fish Logo" className="h-20 object-contain" />
+                     </div>
+            <h1 className="text-3xl font-bold text-emerald-900 mb-2">
               Interpreter Portal
             </h1>
-            <p className="text-gray-600">
+            <p className="text-emerald-900">
               Secure access for verified professionals
             </p>
           </div>
 
-          {/* Features */}
-          <div className="grid grid-cols-1 gap-3 py-4">
-            <div className="flex items-center gap-3 text-sm text-gray-700">
-              <Shield className="w-5 h-5 text-blue-600" />
-              <span>Fully verified and authenticated</span>
-            </div>
-            <div className="flex items-center gap-3 text-sm text-gray-700">
-              <CheckCircle className="w-5 h-5 text-blue-600" />
-              <span>Status-based workflow management</span>
-            </div>
-          </div>
+
 
           {/* Login Form */}
           <div className="space-y-6">
@@ -165,11 +157,11 @@ const InterpreterLogin = () => {
               </motion.div>
             )}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-emerald-700 mb-2">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-2/3 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-3 top-2/3 transform -translate-y-1/2 w-5 h-5 text-emerald-900" />
                 <input
                   id="email"
                   name="email"
@@ -177,23 +169,23 @@ const InterpreterLogin = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   onBlur={handleBlur}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none ${
-                    errors.email && touched.email ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none ${
+                    errors.email && touched.email ? 'border-red-900' : 'border-emerald-900'
                   }`}
                   placeholder="interpreter@example.com"
                 />
               </div>
                 {errors.email && touched.email && (
-                  <p className="mt-1 text-xs text-red-600">{errors.email}</p>
+                  <p className="mt-1 text-xs text-red-900">{errors.email}</p>
                 )}
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-emerald-700 mb-2">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-2/3 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-2/3 transform -translate-y-1/2 w-5 h-5 text-emerald-900" />
                 <input
                   id="password"
                   name="password"
@@ -201,21 +193,21 @@ const InterpreterLogin = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   onBlur={handleBlur}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none ${
-                    errors.password && touched.password ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none ${
+                    errors.password && touched.password ? 'border-red-900' : 'border-emerald-900'
                   }`}
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2/3 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-3 top-2/3 transform -translate-y-1/2 text-emerald-900 hover:text-emerald-900 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
               {errors.password && touched.password && (
-                <p className="mt-1 text-xs text-red-600">{errors.password}</p>
+                <p className="mt-1 text-xs text-red-900">{errors.password}</p>
               )}
             </div>
 
@@ -223,11 +215,11 @@ const InterpreterLogin = () => {
               <label className="flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-primary-900 border-emerald-900 rounded focus:ring-primary-500"
                 />
-                <span className="ml-2 text-sm text-gray-700">Remember me</span>
+                <span className="ml-2 text-sm text-emerald-700">Remember me</span>
               </label>
-              <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+              <button className="text-sm text-primary-900 hover:text-primary-700 font-medium">
                 Forgot password?
               </button>
             </div>
@@ -236,7 +228,8 @@ const InterpreterLogin = () => {
               whileHover={{ scale: 1.05 }}
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              style={{backgroundColor:"#f28c3a"}}
+              className="w-full bg-primary-900 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -249,18 +242,11 @@ const InterpreterLogin = () => {
             </motion.button>
           </div>
 
-          {/* Footer */}
-          <div className="text-center text-sm text-gray-600">
-            Need access?{' '}
-            <button className="text-blue-600 hover:text-blue-700 font-medium">
-              Contact Administrator
-            </button>
-          </div>
         </div>
       </div>
 
       {/* Right Side - Background Slideshow */}
-      <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-gray-900">
+      <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-emerald-900">
         {slides.map((slide, index) => (
           <div
             key={index}
@@ -278,7 +264,7 @@ const InterpreterLogin = () => {
               <h2 className="text-4xl font-bold mb-4 transform transition-all duration-700">
                 {slide.title}
               </h2>
-              <p className="text-xl text-gray-200 mb-8 transform transition-all duration-700">
+              <p className="text-xl text-emerald-200 mb-8 transform transition-all duration-700">
                 {slide.subtitle}
               </p>
               <div className="flex gap-2">
@@ -286,7 +272,7 @@ const InterpreterLogin = () => {
                   <button
                     key={idx}
                     onClick={() => setCurrentSlide(idx)}
-                    className={`h-1 rounded-full transition-all duration-300 ${
+                    className={`h-1 rounded-full transition-all duration-900 ${
                       idx === currentSlide ? 'w-8 bg-white' : 'w-6 bg-white/40'
                     }`}
                   />

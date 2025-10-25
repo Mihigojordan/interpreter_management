@@ -285,11 +285,8 @@ const Sidebar = ({ isOpen = true, onToggle, role }) => {
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-3 border-b border-primary-200">
           <div className="flex items-center space-x-2">
-            <img src={logo} alt="ABYTECH-HUB LTD" className="w-10 h-10 rounded-lg" />
-            <div>
-              <h2 className="font-bold text-base text-primary-800">ABYTECH-HUB LTD</h2>
-              <p className="text-xs text-primary-500">{portalTitle}</p>
-            </div>
+            <img src={logo} alt="Vuga Link" className="w-[100%] h-14 rounded-lg" />
+        
           </div>
           <button
             onClick={onToggle}

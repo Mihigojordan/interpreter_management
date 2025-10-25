@@ -2,17 +2,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
 @theme {
   /* --- Colors --- */
- --color-primary-50: #e7eff8;
-  --color-primary-100: #d6e2f4;
-  --color-primary-200: #adc7e9;
-  --color-primary-300: #88acd7;
-  --color-primary-400: #578bc3;
-  --color-primary-500: #0c62c3; /* The original hex code */
-  --color-primary-600: #0a56ae;
-  --color-primary-700: #084c98;
-  --color-primary-800: #06407d;
-  --color-primary-900: #053365;
-  --color-primary-950: #021a36;
+ --color-primary-50:  #fff4e8;
+  --color-primary-100: #ffe8d1;
+  --color-primary-200: #ffd1a3;
+  --color-primary-300: #ffb871;
+  --color-primary-400: #fca24d;
+  --color-primary-500: #f28c3a; /* The original hex code */
+  --color-primary-600: #db7c32;
+  --color-primary-700: #b46229;
+  --color-primary-800: #8c4c21;
+  --color-primary-900: #5e3216;
+  --color-primary-950: #2f190b;
 
  
   --color-secondary-50: #f0fdfa;
@@ -46,5 +46,6 @@ body{
     font-optical-sizing: auto;
    
     font-style: normal;
+    text-transform:capitalize;
   }
 
