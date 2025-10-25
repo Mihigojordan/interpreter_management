@@ -24,6 +24,8 @@ import AbyTechLocations from "./pages/Location";
 import InterpreterLogin from "./pages/auth/interpreter/InterpreterLogin";
 import ProtectPrivateInterpreterRoute from "./components/protectors/ProtectPrivateInterpreterRoute";
 import InterpreterProfilePage from "./pages/dashboard/InterpreterProfilePage";
+import InterpreterRequest from "./pages/dashboard/InterpreterRequest";
+import InterpretationRequestDetails from "./pages/dashboard/InterpretationRequestDetails";
 
 
 
@@ -52,6 +54,8 @@ const router = createBrowserRouter([
         children:[
           {index:true , element:<DashboardHome />},
           {path:'interpreter' , element:<InterpreterDashboard />},
+          {path:'interpreter-request' , element:<InterpreterRequest />},
+          {path:'interpreter-request/:id' , element:<InterpretationRequestDetails />},
           {path:'report' , element:<ReportDashboard />},
           {path:'profile' , element:<AdminProfilePage />},
           

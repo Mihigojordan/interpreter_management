@@ -39,24 +39,27 @@ enum AdminStatus{
 
 
 model InterpreterRequest {
-  id                    Int       @id @default(autoincrement())
-  fullName              String
-  email                 String
-  phone                 String
-  preferredContactMethod String
-  languageFrom          String
-  languageTo            String
-  serviceType           String
-  dateTime              DateTime
-  location              String
-  durationMinutes       Int
-  interpreterType       String
-  specialRequirements   String?
-  reason                String
-  urgencyLevel          String
-  additionalNotes       String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  id                      Int       @id @default(autoincrement())
+  fullName                String
+  email                   String
+  phone                   String
+  preferredContactMethod   String
+  languageFrom            String
+  languageTo              String
+  serviceType             String
+  dateTime                DateTime
+  location                String
+  durationMinutes         Int
+  interpreterType         String
+  specialRequirements     String?
+  reason                  String
+  urgencyLevel            String
+  additionalNotes         String?
+  status                  String   @default("pending") // Supports 'pending', 'accepted', 'rejected'
+  interpreterId           String?  // Add this to link to Interpreter
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  interpreter             Interpreter? @relation(fields: [interpreterId], references: [id]) // Optional relation
 }
 
 model Interpreter {
@@ -83,6 +86,8 @@ model Interpreter {
   isOnline  Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  InterpreterRequest InterpreterRequest[]
 }
 
 enum Type{
