@@ -105,26 +105,12 @@ const Header = ({ onToggle, role }) => {
               <Menu className="w-5 h-5 text-white" />
             </motion.div>
             <h1 className="text-xl font-semibold text-gray-900">
-              {role === 'admin' ? 'Admin Dashboard' : 'Interpreter Portal'}
+              {role === 'admin' ? ' VugaLink  Admin Dashboard' : 'VugaLink Interpreter Portal'}
             </h1>
           </div>
 
           <div className="flex items-center space-x-4">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              className="p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-              aria-label="Notifications"
-            >
-              <Bell className="w-5 h-5" />
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              className="p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-              aria-label="Settings"
-              onClick={() => navigate(role === 'admin' ? '/admin/settings' : '/interpreter/settings')}
-            >
-              <Settings className="w-5 h-5" />
-            </motion.button>
+         
 
             {/* User Profile Dropdown */}
             <div className="relative" ref={dropdownRef}>
