@@ -39,7 +39,7 @@ enum AdminStatus{
 
 
 model InterpreterRequest {
-  id                      Int       @id @default(autoincrement())
+  id            String   @id @default(uuid())
   fullName                String
   email                   String
   phone                   String
@@ -60,7 +60,12 @@ model InterpreterRequest {
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
   interpreter             Interpreter? @relation(fields: [interpreterId], references: [id]) // Optional relation
+    message  Message[]
 }
+
+
+
+
 
 model Interpreter {
   id        String   @id @default(uuid())
@@ -86,7 +91,7 @@ model Interpreter {
   isOnline  Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-
+  message  Message[]
   InterpreterRequest InterpreterRequest[]
 }
 
@@ -99,4 +104,18 @@ enum Status {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+
+
+model Message {
+  id            String   @id @default(uuid())
+  content       String
+  interpreterId String
+  requestId     String
+  createdAt     DateTime @default(now())
+
+  // Relations
+  interpreter   Interpreter @relation(fields: [interpreterId], references: [id])
+  request       InterpreterRequest      @relation(fields: [requestId], references: [id])
 }

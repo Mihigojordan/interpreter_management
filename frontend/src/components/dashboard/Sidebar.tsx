@@ -98,28 +98,15 @@ const Sidebar = ({ isOpen = true, onToggle, role }) => {
 
     return [
       ...navItems,
-      {
-        id: 'admin-tools',
-        label: 'Admin Tools',
-        icon: Cog,
-        allowedRoles: ['admin'],
-        items: [
-          {
-            id: 'user-management',
-            label: 'User Management',
-            icon: UserPlus,
-            path: `${basePath}/users`,
-            allowedRoles: ['admin'],
-          },
-          {
-            id: 'reports',
-            label: 'Reports',
-            icon: ClipboardList,
-            path: `${basePath}/reports`,
-            allowedRoles: ['admin'],
-          },
-        ],
+
+       {
+        id: 'requests',
+        label: 'Requests',
+        icon: Inbox,
+        path: `${basePath}/request`,
+        allowedRoles: ['interpreter'],
       },
+      
     ];
   };
 

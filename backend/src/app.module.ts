@@ -7,6 +7,7 @@ import { EmailModule } from './global/email/email.module';
 import { DriveModule } from './global/googleDriveService/driver.module';
 import { InterpreterRequestsModule } from './modules/interepeter-request/interpreter-requests.module';
 import { InterpreterModule } from './modules/interpreter/interpreter.module';
+import { MessageModule } from './modules/message/message.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { InterpreterModule } from './modules/interpreter/interpreter.module';
     DriveModule,
     InterpreterRequestsModule,
     
-    InterpreterModule
+    InterpreterModule,
+    MessageModule,  
   ],
   controllers: [AppController],
 })

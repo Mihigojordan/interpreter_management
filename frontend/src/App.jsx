@@ -26,6 +26,8 @@ import ProtectPrivateInterpreterRoute from "./components/protectors/ProtectPriva
 import InterpreterProfilePage from "./pages/dashboard/InterpreterProfilePage";
 import InterpreterRequest from "./pages/dashboard/InterpreterRequest";
 import InterpretationRequestDetails from "./pages/dashboard/InterpretationRequestDetails";
+import InterpreterRequestDashboard from "./pages/dashboard/InterpreterRequestDashboard";
+import RequestDetailsPage from "./pages/dashboard/RequestDetails";
 
 
 
@@ -76,6 +78,8 @@ const router = createBrowserRouter([
           {index:true , element:<DashboardHome />},
        
           {path:'profile' , element:<InterpreterProfilePage />},
+          {path:'request' , element:<InterpreterRequestDashboard />},
+          {path:'request/:id' , element:<RequestDetailsPage />},
           
         ]
        },

@@ -89,17 +89,23 @@ export class InterpreterRequestsService {
       throw new BadRequestException('Failed to retrieve interpreter requests');
     }
   }
+  async getAllRequestsByInterpreters(interpreterId:string) {
+    try {
+      return await this.prisma.interpreterRequest.findMany({
+        where: { interpreterId,status:'accepted' },
+        orderBy: { createdAt: 'desc' },
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve interpreter requests');
+    }
+  }
 
   // ✅ VIEW ONE
   async getRequestById(id: string) {
     try {
-      const numericId = Number(id);
-      if (isNaN(numericId)) {
-        throw new BadRequestException('Invalid ID format — must be a number');
-      }
-
+    
       const request = await this.prisma.interpreterRequest.findUnique({
-        where: { id: numericId },
+        where: { id: id },
       });
 
       if (!request) {
@@ -115,14 +121,11 @@ export class InterpreterRequestsService {
   // ✅ APPROVE REQUEST
   async approveRequest(id: string, interpreterId: string) {
     try {
-      const numericId = Number(id);
-      if (isNaN(numericId)) {
-        throw new BadRequestException('Invalid request ID format — must be a number');
-      }
+     
 
       // Check if request exists
       const request = await this.prisma.interpreterRequest.findUnique({
-        where: { id: numericId },
+        where: { id: id },
       });
       if (!request) {
         throw new NotFoundException(`Interpreter request with ID ${id} not found`);
@@ -138,7 +141,7 @@ export class InterpreterRequestsService {
 
       // Update request status and assign interpreter
       const updatedRequest = await this.prisma.interpreterRequest.update({
-        where: { id: numericId },
+        where: { id: id },
         data: {
           status: 'accepted',
           interpreterId,
@@ -172,10 +175,7 @@ export class InterpreterRequestsService {
   // ✅ REJECT REQUEST
   async rejectRequest(id: string, reason: string) {
     try {
-      const numericId = Number(id);
-      if (isNaN(numericId)) {
-        throw new BadRequestException('Invalid request ID format — must be a number');
-      }
+      const numericId =  id
 
       // Check if request exists
       const request = await this.prisma.interpreterRequest.findUnique({

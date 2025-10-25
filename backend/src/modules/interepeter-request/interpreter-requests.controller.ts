@@ -1,5 +1,6 @@
-import { Controller, Post, Body, BadRequestException, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException, Get, Param, UseGuards, Req } from '@nestjs/common';
 import { InterpreterRequestsService } from './interpreter-requests.service';
+import { InterpreterAuthGuard, RequestWithInterpreter } from 'src/guards/interpreter-auth.guard';
 
 type InterpreterRequestCreateInput = {
   userInfo: {
@@ -61,6 +62,16 @@ export class InterpreterRequestsController {
     }
   }
 
+  @Get('my-requests')
+  @UseGuards(InterpreterAuthGuard)
+  async findAllByInterpreters(@Req() req: RequestWithInterpreter) {
+    try {
+      return await this.interpreterRequestsService.getAllRequestsByInterpreters(req.interpreter.id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+    
   // ✅ VIEW ONE interpreter request by ID
   @Get(':id')
   async findOne(@Param('id') id: string) {

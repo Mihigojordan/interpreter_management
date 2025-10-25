@@ -22,6 +22,15 @@ class InterpretationRequestService {
             throw new Error(msg);
         }
     }
+    async getAllRequestsByInterpreters() {
+        try {
+            const response = await api.get('/interpreter-requests/my-requests');
+            return response.data;
+        } catch (error) {
+            const msg = error.response.data.message || 'Failed to fetch interpretation requests';
+            throw new Error(msg);
+        }
+    }
 
     // Get interpretation request by ID
     async getRequestById(id) {
