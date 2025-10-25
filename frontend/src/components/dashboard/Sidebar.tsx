@@ -84,13 +84,14 @@ const Sidebar = ({ isOpen = true, onToggle, role }) => {
         path: `${basePath}/interpreter`,
         allowedRoles: ['admin'],
       },
+  
    
       {
         id: 'requests',
         label: 'Interpretation Requests',
         icon: Inbox,
-        path: `${basePath}/requests`,
-        allowedRoles: ['interpreter'],
+        path: `${basePath}/interpreter-request`,
+        allowedRoles: ['admin'],
       },
      
     ];

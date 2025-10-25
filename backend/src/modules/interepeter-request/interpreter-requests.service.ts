@@ -1,7 +1,6 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { EmailService } from '../../global/email/email.service';
-
 
 type InterpreterRequestCreateInput = {
   userInfo: {
@@ -36,6 +35,7 @@ export class InterpreterRequestsService {
     private readonly emailService: EmailService,
   ) {}
 
+  // ✅ CREATE
   async createInterpreterRequest(data: InterpreterRequestCreateInput) {
     try {
       const interpreterRequest = await this.prisma.interpreterRequest.create({
@@ -76,6 +76,144 @@ export class InterpreterRequestsService {
       return interpreterRequest;
     } catch (error) {
       throw new BadRequestException('Failed to create interpreter request');
+    }
+  }
+
+  // ✅ VIEW ALL
+  async getAllRequests() {
+    try {
+      return await this.prisma.interpreterRequest.findMany({
+        orderBy: { createdAt: 'desc' },
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve interpreter requests');
+    }
+  }
+
+  // ✅ VIEW ONE
+  async getRequestById(id: string) {
+    try {
+      const numericId = Number(id);
+      if (isNaN(numericId)) {
+        throw new BadRequestException('Invalid ID format — must be a number');
+      }
+
+      const request = await this.prisma.interpreterRequest.findUnique({
+        where: { id: numericId },
+      });
+
+      if (!request) {
+        throw new NotFoundException(`Interpreter request with ID ${id} not found`);
+      }
+
+      return request;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  // ✅ APPROVE REQUEST
+  async approveRequest(id: string, interpreterId: string) {
+    try {
+      const numericId = Number(id);
+      if (isNaN(numericId)) {
+        throw new BadRequestException('Invalid request ID format — must be a number');
+      }
+
+      // Check if request exists
+      const request = await this.prisma.interpreterRequest.findUnique({
+        where: { id: numericId },
+      });
+      if (!request) {
+        throw new NotFoundException(`Interpreter request with ID ${id} not found`);
+      }
+
+      // Check if interpreter exists
+      const interpreter = await this.prisma.interpreter.findUnique({
+        where: { id: interpreterId },
+      });
+      if (!interpreter) {
+        throw new NotFoundException(`Interpreter with ID ${interpreterId} not found`);
+      }
+
+      // Update request status and assign interpreter
+      const updatedRequest = await this.prisma.interpreterRequest.update({
+        where: { id: numericId },
+        data: {
+          status: 'accepted',
+          interpreterId,
+        },
+        include: { interpreter: true }, // Include interpreter details
+      });
+
+      // Send approval email
+      await this.emailService.sendEmail(
+        request.email,
+        'Interpreter Request Approved',
+        'interpreter-request-approved',
+        {
+          fullName: request.fullName,
+          languageFrom: request.languageFrom,
+          languageTo: request.languageTo,
+          serviceType: request.serviceType,
+          dateTime: request.dateTime.toISOString(),
+          location: request.location,
+          durationMinutes: request.durationMinutes,
+          interpreterName: interpreter.name,
+        },
+      );
+
+      return updatedRequest;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  // ✅ REJECT REQUEST
+  async rejectRequest(id: string, reason: string) {
+    try {
+      const numericId = Number(id);
+      if (isNaN(numericId)) {
+        throw new BadRequestException('Invalid request ID format — must be a number');
+      }
+
+      // Check if request exists
+      const request = await this.prisma.interpreterRequest.findUnique({
+        where: { id: numericId },
+      });
+      if (!request) {
+        throw new NotFoundException(`Interpreter request with ID ${id} not found`);
+      }
+
+      // Update request status and store rejection reason
+      const updatedRequest = await this.prisma.interpreterRequest.update({
+        where: { id: numericId },
+        data: {
+          status: 'rejected',
+          additionalNotes: reason, // Store rejection reason in additionalNotes
+        },
+      });
+
+      // Send rejection email
+      await this.emailService.sendEmail(
+        request.email,
+        'Interpreter Request Rejected',
+        'interpreter-request-rejected',
+        {
+          fullName: request.fullName,
+          languageFrom: request.languageFrom,
+          languageTo: request.languageTo,
+          serviceType: request.serviceType,
+          dateTime: request.dateTime.toISOString(),
+          location: request.location,
+          durationMinutes: request.durationMinutes,
+          reason,
+        },
+      );
+
+      return updatedRequest;
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
   }
 }
