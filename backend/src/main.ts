@@ -16,7 +16,7 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-      origin:[ process.env.CORS_ORIGIN , 'null', 'http://localhost:5173'],
+      origin:[ process.env.CORS_ORIGIN , 'https://interpreter-management.onrender.com','https://vuga-link.onrender.com' ,'http://localhost:5173'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

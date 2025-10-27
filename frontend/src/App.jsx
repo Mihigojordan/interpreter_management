@@ -1,34 +1,41 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter, createBrowserRouter, Navigate, Outlet, Route, RouterProvider, Routes } from "react-router-dom"
-const HomePage = lazy(() => import("./pages/HomePage"));
-const ContactUs = lazy(() => import("./pages/ContactUs"));
-const BlogPage = lazy(() => import("./pages/blogs/BlogPage"));
-const BlogSingle = lazy(() => import("./pages/blogs/Blogsingle"));
-const ServicePage = lazy(() => import("./pages/services/ServicePage"));
-const ServiceSingle = lazy(() => import("./pages/services/ServiceSingle"));
-const BlogContainer = lazy(() => import("../src/pages/blogs/blogContainer"));
-const AboutUs = lazy(() => import('./pages/about us/aboutUs'));
-const TeamMember = lazy(() => import('./pages/Team'))
+// const HomePage = lazy(() => import("./pages/HomePage"));
+// const ContactUs = lazy(() => import("./pages/ContactUs"));
+// const BlogPage = lazy(() => import("./pages/blogs/BlogPage"));
+// const BlogSingle = lazy(() => import("./pages/blogs/Blogsingle"));
+// const ServicePage = lazy(() => import("./pages/services/ServicePage"));
+// const ServiceSingle = lazy(() => import("./pages/services/ServiceSingle"));
+// const BlogContainer = lazy(() => import("../src/pages/blogs/blogContainer"));
+// const AboutUs = lazy(() => import('./pages/about us/aboutUs'));
+// const TeamMember = lazy(() => import('./pages/Team'))
 
-import MainLayout from "./layouts/MainLayout";
-import ProjectsPage from "./pages/Projects/ProjectPages";
-import AdminLogin from "./pages/auth/admin/Login";
-import ProtectPrivateAdminRoute from "./components/protectors/ProtectPrivateAdminRoute";
+
+
+// 🧩 Layouts (NOT lazy loaded)
+// import MainLayout from "./layouts/MainLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
-import DashboardHome from "./pages/dashboard/DashboardHome";
-import AdminProfilePage from "./pages/dashboard/AdminProfile";
-import UnlockScreen from "./pages/auth/admin/UnlockScreen";
-import InterpreterDashboard from "./pages/dashboard/InterpreterDashboard";
-import ReportDashboard from "./pages/dashboard/ReportManagement";
-import AbyTechLocations from "./pages/Location";
-import InterpreterLogin from "./pages/auth/interpreter/InterpreterLogin";
+
+// 🧠 Protectors (usually small, no need to lazy load)
+import ProtectPrivateAdminRoute from "./components/protectors/ProtectPrivateAdminRoute";
 import ProtectPrivateInterpreterRoute from "./components/protectors/ProtectPrivateInterpreterRoute";
-import InterpreterProfilePage from "./pages/dashboard/InterpreterProfilePage";
-import InterpreterRequest from "./pages/dashboard/InterpreterRequest";
-import InterpretationRequestDetails from "./pages/dashboard/InterpretationRequestDetails";
-import InterpreterRequestDashboard from "./pages/dashboard/InterpreterRequestDashboard";
-import RequestDetailsPage from "./pages/dashboard/RequestDetails";
-import InterpreterDetailView from "./pages/dashboard/InterpreterViewMorePage";
+
+// 🚀 Lazy-loaded pages
+const ProjectsPage = lazy(() => import("./pages/Projects/ProjectPages"));
+const AdminLogin = lazy(() => import("./pages/auth/admin/Login"));
+const UnlockScreen = lazy(() => import("./pages/auth/admin/UnlockScreen"));
+const DashboardHome = lazy(() => import("./pages/dashboard/DashboardHome"));
+const AdminProfilePage = lazy(() => import("./pages/dashboard/AdminProfile"));
+const InterpreterDashboard = lazy(() => import("./pages/dashboard/InterpreterDashboard"));
+const ReportDashboard = lazy(() => import("./pages/dashboard/ReportManagement"));
+const AbyTechLocations = lazy(() => import("./pages/Location"));
+const InterpreterLogin = lazy(() => import("./pages/auth/interpreter/InterpreterLogin"));
+const InterpreterProfilePage = lazy(() => import("./pages/dashboard/InterpreterProfilePage"));
+const InterpreterRequest = lazy(() => import("./pages/dashboard/InterpreterRequest"));
+const InterpretationRequestDetails = lazy(() => import("./pages/dashboard/InterpretationRequestDetails"));
+const InterpreterRequestDashboard = lazy(() => import("./pages/dashboard/InterpreterRequestDashboard"));
+const RequestDetailsPage = lazy(() => import("./pages/dashboard/RequestDetails"));
+const InterpreterDetailView = lazy(() => import("./pages/dashboard/InterpreterViewMorePage"));
 
 
 

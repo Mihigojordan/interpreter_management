@@ -313,10 +313,13 @@ const InterpretationRequestDetails = () => {
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Special Requirements</p>
                   <p className="text-sm text-gray-900">{request.specialRequirements || 'None specified'}</p>
                 </div>
-                <div className="bg-gray-50 rounded-xl p-4">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Additional Notes</p>
+               {
+                request.status == 'rejected' &&
+                 <div className="bg-gray-50 rounded-xl p-4">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Reject Notes</p>
                   <p className="text-sm text-gray-900">{request.additionalNotes || 'None provided'}</p>
                 </div>
+               }
               </div>
             </motion.div>
 
