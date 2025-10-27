@@ -19,8 +19,8 @@ import {
   Power,
 } from 'lucide-react';
 import interpretationRequestService from '../../services/interpretationRequestService';
-import interpreterService from '../../services/InterpreterService';
-import messageService from '../../services/MessageService';
+import interpreterService from '../../services/interpreterService';
+import messageService from '../../services/messageService';
 import { AdminAuthContext } from '../../context/AdminAuthContext';
 import { InterpreterAuthContext } from '../../context/InterpreterAuthContext';
 import { useOutletContext } from 'react-router-dom';
