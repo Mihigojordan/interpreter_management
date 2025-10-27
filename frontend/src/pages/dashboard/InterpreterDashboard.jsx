@@ -98,8 +98,7 @@ const InterpreterDashboard = () => {
 
   const handleViewInterpreter = (interpreter) => {
     if (!interpreter?.id) return;
-    setSelectedInterpreter(interpreter);
-    setShowViewModal(true);
+    navigate('/dashboard/interpreter/'+interpreter.id)
   };
 
   const handleAcceptInterpreter = async (interpreter) => {

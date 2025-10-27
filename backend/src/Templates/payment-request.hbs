@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Payment Request - {{companyName}}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; background:#f4f6f9; margin:0; padding:0; }
+    .container { max-width:600px; margin:20px auto; background:#fff; border-radius:8px; padding:22px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+    h1 { color:#1f8f7a; font-size:22px; margin:0 0 6px; }
+    p { font-size:15px; color:#333; line-height:1.45; margin:8px 0; }
+    .muted { font-size:13px; color:#777; }
+    .invoice { background:#f0fbf7; border:1px solid #e6f4ef; padding:12px; border-radius:6px; margin:12px 0; }
+    .amount { font-weight:700; font-size:18px; color:#0f6b57; }
+    .btn { display:inline-block; text-decoration:none; padding:10px 14px; border-radius:8px; background:#1f8f7a; color:#fff; font-weight:600; margin-top:12px; }
+    .ussd { font-family: "Courier New", monospace; background:#eef8f5; padding:8px 10px; border-radius:6px; display:inline-block; margin-top:8px; }
+    .footer { text-align:center; font-size:13px; color:#999; margin-top:18px; }
+    .note { font-size:13px; color:#555; margin-top:10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hi {{firstName}} 👋</h1>
+
+    <p>We hope you're doing well. This is a friendly reminder that an invoice from <strong>{{companyName}}</strong> is awaiting payment.</p>
+
+    <div class="invoice">
+      <p class="muted">Invoice</p>
+      <p><strong>#{{invoiceNumber}}</strong></p>
+      <p class="amount">{{currency}}{{amount}}</p>
+      <p class="muted">Due by: {{dueDate}}</p>
+    </div>
+
+    <p>To complete payment quickly on your phone, dial the USSD code below and follow the prompts:</p>
+
+    <p class="ussd"><strong>*182*8*1*1238212*500#</strong></p>
+
+    <p class="note">If you're on a mobile device, you can also tap the button below to open the dialer (your device will open the USSD dialer):</p>
+
+    <!-- tel link encodes the '#' as %23 so mobile taps work -->
+    <a class="btn" href="tel:*182*8*1*1238212*500%23">Pay now with USSD</a>
+
+    <p class="note">When asked, please enter the payment reference: <strong>{{invoiceNumber}}</strong>. This helps us match your payment instantly.</p>
+
+    <p>If you prefer another way to pay, reply to this email or contact us at <a href="mailto:{{contactEmail}}">{{contactEmail}}</a> or call <a href="tel:{{contactPhone}}">{{contactPhone}}</a>.</p>
+
+    <p class="muted">Thanks for working with {{companyName}} — we appreciate you!</p>
+
+    <div class="footer">
+      <p>© {{year}} {{companyName}} | All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

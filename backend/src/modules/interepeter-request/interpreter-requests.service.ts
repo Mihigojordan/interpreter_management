@@ -33,7 +33,7 @@ export class InterpreterRequestsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly emailService: EmailService,
-  ) {}
+  ) { }
 
   // ✅ CREATE
   async createInterpreterRequest(data: InterpreterRequestCreateInput) {
@@ -89,10 +89,10 @@ export class InterpreterRequestsService {
       throw new BadRequestException('Failed to retrieve interpreter requests');
     }
   }
-  async getAllRequestsByInterpreters(interpreterId:string) {
+  async getAllRequestsByInterpreters(interpreterId: string) {
     try {
       return await this.prisma.interpreterRequest.findMany({
-        where: { interpreterId,status:'accepted' },
+        where: { interpreterId, status: 'accepted' },
         orderBy: { createdAt: 'desc' },
       });
     } catch (error) {
@@ -103,7 +103,7 @@ export class InterpreterRequestsService {
   // ✅ VIEW ONE
   async getRequestById(id: string) {
     try {
-    
+
       const request = await this.prisma.interpreterRequest.findUnique({
         where: { id: id },
       });
@@ -119,9 +119,9 @@ export class InterpreterRequestsService {
   }
 
   // ✅ APPROVE REQUEST
-  async approveRequest(id: string, interpreterId: string) {
+  async approveRequest(id: string, interpreterId: string,amount:number) {
     try {
-     
+
 
       // Check if request exists
       const request = await this.prisma.interpreterRequest.findUnique({
@@ -145,6 +145,7 @@ export class InterpreterRequestsService {
         data: {
           status: 'accepted',
           interpreterId,
+          amount
         },
         include: { interpreter: true }, // Include interpreter details
       });
@@ -172,10 +173,50 @@ export class InterpreterRequestsService {
     }
   }
 
+
+  async requestPayment(requestId: string, amount: string) {
+
+    try {
+
+      const request = await this.prisma.interpreterRequest.findUnique(
+        {
+          where: {
+            id: requestId
+          }
+        })
+
+      if (!request) throw new NotFoundException('request was not found')
+
+      await this.emailService.sendEmail(
+        request.email,
+        'Payment Request',
+        'payment-request',  // the .hbs template name
+        {
+          firstName: request.fullName,
+          amount,
+          currency: "RWF",
+          dueDate: new Date().toDateString(),
+          contactEmail: 'info@vugalink.rw',
+          contactPhone: '+250 788 376 668',
+          companyName: 'Vuga Link Ltd',
+          year: new Date().getFullYear(),
+        },
+      );
+
+
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+
+  }
+
+
+
+
   // ✅ REJECT REQUEST
   async rejectRequest(id: string, reason: string) {
     try {
-      const numericId =  id
+      const numericId = id
 
       // Check if request exists
       const request = await this.prisma.interpreterRequest.findUnique({

@@ -15,40 +15,19 @@ import {
   RefreshCw,
   Globe,
   Eye,
+  DollarSign,
+  Power,
 } from 'lucide-react';
+import interpretationRequestService from '../../services/InterpretationRequestService';
+import interpreterService from '../../services/InterpreterService';
+import messageService from '../../services/MessageService';
+import { AdminAuthContext } from '../../context/AdminAuthContext';
+import { InterpreterAuthContext } from '../../context/InterpreterAuthContext';
 
-// Mock contexts and services for demonstration
-const InterpreterAuthContext = React.createContext({ user: { id: '1', name: 'John Doe' }, isAuthenticated: true });
-const AdminAuthContext = React.createContext({ user: null, isAuthenticated: false });
-
-const mockServices = {
-  interpretationRequestService: {
-    getAllRequests: async () => [
-      { id: '1', fullName: 'Alice Johnson', languageFrom: 'English', languageTo: 'Spanish', status: 'pending', urgencyLevel: 'high', createdAt: new Date().toISOString(), dateTime: new Date().toISOString() }
-    ],
-    getAllRequestsByInterpreters: async () => [
-      { id: '1', fullName: 'Alice Johnson', languageFrom: 'English', languageTo: 'Spanish', status: 'pending', urgencyLevel: 'high', createdAt: new Date().toISOString(), dateTime: new Date().toISOString() }
-    ]
-  },
-  interpreterService: {
-    getAllInterpreters: async () => [
-      { id: '1', name: 'John Doe', languages: ['English', 'Spanish'] }
-    ]
-  },
-  messageService: {
-    getAllMessages: async () => [
-      { id: '1', content: 'Hello', requestId: '1', interpreter: { name: 'John Doe' }, createdAt: new Date().toISOString() }
-    ],
-    getMessagesByRequest: async () => [
-      { id: '1', content: 'Hello', requestId: '1', interpreter: { name: 'John Doe' }, createdAt: new Date().toISOString() }
-    ]
-  }
-};
-
-const DashboardSummary = ({ role = 'interpreter' }) => {
+const DashboardSummary = ({ role }) => {
   const { user: interpreterUser, isAuthenticated: isInterpreterAuthenticated } = useContext(InterpreterAuthContext);
   const { user: adminUser, isAuthenticated: isAdminAuthenticated } = useContext(AdminAuthContext);
-  
+
   const [dashboardData, setDashboardData] = useState({
     requests: [],
     interpreters: [],
@@ -59,8 +38,20 @@ const DashboardSummary = ({ role = 'interpreter' }) => {
       pendingRequests: 0,
       acceptedRequests: 0,
       rejectedRequests: 0,
+      assignedRequests: 0,
+      paidRequests: 0,
+      totalInterpreters: 0,
+      pendingInterpreters: 0,
+      acceptedInterpreters: 0,
+      rejectedInterpreters: 0,
+      paidInterpreters: 0,
+      onlineInterpreters: 0,
+      offlineInterpreters: 0,
+      activeInterpreters: 0,
+      deactivatedInterpreters: 0,
+      totalAmountRequests: 0,
+      totalAmountInterpreters: 0,
       recentActivity: 0,
-      uniqueInterpreters: 0,
     },
   });
   const [loading, setLoading] = useState(true);
@@ -71,7 +62,6 @@ const DashboardSummary = ({ role = 'interpreter' }) => {
   const currentUser = isAdmin ? adminUser : interpreterUser;
 
   useEffect(() => {
-    // Early return if not authenticated - stop loading
     if (!isAuthenticated || !currentUser) {
       setLoading(false);
       setError('Not authenticated');
@@ -81,45 +71,44 @@ const DashboardSummary = ({ role = 'interpreter' }) => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         let requestsData = [];
         let interpretersData = [];
         let messagesData = [];
 
-        // Fetch requests based on role
+        // Fetch interpreter data for both roles
+        interpretersData = await interpreterService.getAllInterpreters();
+
+        // Fetch requests and messages based on role
         if (isAdmin) {
-          const [requests, interpreters, messages] = await Promise.all([
-            mockServices.interpretationRequestService.getAllRequests(),
-            mockServices.interpreterService.getAllInterpreters(),
-            mockServices.messageService.getAllMessages()
+          const [requests, messages] = await Promise.all([
+            interpretationRequestService.getAllRequests(),
+            messageService.getAllMessages(),
           ]);
           requestsData = requests;
-          interpretersData = interpreters;
           messagesData = messages;
         } else {
-          requestsData = await mockServices.interpretationRequestService.getAllRequestsByInterpreters();
-          
-          // Fetch messages only for assigned requests
+          requestsData = await interpretationRequestService.getAllRequestsByInterpreters();
           const requestIds = requestsData.map((req) => req.id);
           if (requestIds.length > 0) {
-            const messagePromises = requestIds.map((id) => 
-              mockServices.messageService.getMessagesByRequest(id)
+            const messagePromises = requestIds.map((id) =>
+              messageService.getMessagesByRequest(id)
             );
             const messagesArrays = await Promise.all(messagePromises);
             messagesData = messagesArrays.flat();
           }
         }
 
-        // Sort by createdAt descending
-        const sortedRequests = requestsData.sort((a, b) => 
-          new Date(b.createdAt) - new Date(a.createdAt)
+        // Sort data
+        const sortedRequests = requestsData.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
-        const sortedMessages = messagesData.sort((a, b) => 
-          new Date(b.createdAt) - new Date(a.createdAt)
+        const sortedMessages = messagesData.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
 
-        // Recent activity (last 30 days)
+        // Calculate recent activity (last 30 days)
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         const recentActivity = [...requestsData, ...messagesData].filter(
@@ -145,10 +134,26 @@ const DashboardSummary = ({ role = 'interpreter' }) => {
           pendingRequests: requestsData.filter((req) => req.status === 'pending').length,
           acceptedRequests: requestsData.filter((req) => req.status === 'accepted').length,
           rejectedRequests: requestsData.filter((req) => req.status === 'rejected').length,
+          assignedRequests: requestsData.filter((req) => req.interpreterId).length,
+          paidRequests: requestsData.filter((req) => req.paymentStatus === 'PAID').length,
+          totalInterpreters: interpretersData.length,
+          pendingInterpreters: interpretersData.filter((int) => int.status === 'PENDING').length,
+          acceptedInterpreters: interpretersData.filter((int) => int.status === 'ACCEPTED').length,
+          rejectedInterpreters: interpretersData.filter((int) => int.status === 'REJECTED').length,
+          paidInterpreters: interpretersData.filter((int) => int.paymentStatus === 'PAID').length,
+          onlineInterpreters: interpretersData.filter((int) => int.isOnline).length,
+          offlineInterpreters: interpretersData.filter((int) => !int.isOnline).length,
+          activeInterpreters: interpretersData.filter((int) => int.status === 'ACCEPTED').length,
+          deactivatedInterpreters: interpretersData.filter(
+            (int) => int.status !== 'ACCEPTED'
+          ).length,
+          totalAmountRequests: isAdmin
+            ? requestsData.reduce((sum, req) => sum + (req.amount || 0), 0)
+            : 0,
+          totalAmountInterpreters: isAdmin
+            ? interpretersData.reduce((sum, int) => sum + (int.amount || 0), 0)
+            : 0,
           recentActivity,
-          uniqueInterpreters: isAdmin
-            ? new Set(interpretersData.map((int) => int.id)).size
-            : requestsData.filter((req) => req.interpreterId).length,
         };
 
         setDashboardData({
@@ -167,7 +172,7 @@ const DashboardSummary = ({ role = 'interpreter' }) => {
     };
 
     fetchData();
-  }, [isAuthenticated, isAdmin, currentUser?.id]); // Simplified dependencies
+  }, [isAuthenticated, isAdmin, currentUser?.id]);
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -181,40 +186,111 @@ const DashboardSummary = ({ role = 'interpreter' }) => {
     {
       label: 'Total Requests',
       value: dashboardData.stats.totalRequests,
-      change: '+12%',
       icon: FileText,
       color: 'bg-blue-500',
-      trend: 'up',
     },
     {
       label: 'Pending Requests',
       value: dashboardData.stats.pendingRequests,
-      change: '+5%',
       icon: Clock,
       color: 'bg-yellow-500',
-      trend: 'up',
     },
     {
       label: 'Accepted Requests',
       value: dashboardData.stats.acceptedRequests,
-      change: '-3%',
       icon: Users,
       color: 'bg-green-500',
-      trend: 'down',
     },
     {
-      label: isAdmin ? 'Unique Interpreters' : 'Assigned Requests',
-      value: isAdmin
-        ? dashboardData.stats.uniqueInterpreters
-        : dashboardData.stats.totalRequests,
-      change: '+8%',
+      label: 'Rejected Requests',
+      value: dashboardData.stats.rejectedRequests,
+      icon: Users,
+      color: 'bg-red-500',
+    },
+    {
+      label: 'Assigned Requests',
+      value: dashboardData.stats.assignedRequests,
       icon: Globe,
       color: 'bg-purple-500',
-      trend: 'up',
     },
+    {
+      label: 'Paid Requests',
+      value: dashboardData.stats.paidRequests,
+      icon: DollarSign,
+      color: 'bg-teal-500',
+    },
+    {
+      label: 'Total Interpreters',
+      value: dashboardData.stats.totalInterpreters,
+      icon: Users,
+      color: 'bg-indigo-500',
+    },
+    {
+      label: 'Pending Interpreters',
+      value: dashboardData.stats.pendingInterpreters,
+      icon: Clock,
+      color: 'bg-orange-500',
+    },
+    {
+      label: 'Accepted Interpreters',
+      value: dashboardData.stats.acceptedInterpreters,
+      icon: Users,
+      color: 'bg-green-600',
+    },
+    {
+      label: 'Rejected Interpreters',
+      value: dashboardData.stats.rejectedInterpreters,
+      icon: Users,
+      color: 'bg-red-600',
+    },
+    {
+      label: 'Paid Interpreters',
+      value: dashboardData.stats.paidInterpreters,
+      icon: DollarSign,
+      color: 'bg-blue-600',
+    },
+    {
+      label: 'Online Interpreters',
+      value: dashboardData.stats.onlineInterpreters,
+      icon: Power,
+      color: 'bg-teal-600',
+    },
+    {
+      label: 'Offline Interpreters',
+      value: dashboardData.stats.offlineInterpreters,
+      icon: Power,
+      color: 'bg-gray-500',
+    },
+    {
+      label: 'Active Interpreters',
+      value: dashboardData.stats.activeInterpreters,
+      icon: Users,
+      color: 'bg-green-700',
+    },
+    {
+      label: 'Deactivated Interpreters',
+      value: dashboardData.stats.deactivatedInterpreters,
+      icon: Users,
+      color: 'bg-red-700',
+    },
+    ...(isAdmin
+      ? [
+          {
+            label: 'Total Amount (Requests)',
+            value: `$${dashboardData.stats.totalAmountRequests.toLocaleString()}`,
+            icon: DollarSign,
+            color: 'bg-pink-500',
+          },
+          {
+            label: 'Total Amount (Interpreters)',
+            value: `$${dashboardData.stats.totalAmountInterpreters.toLocaleString()}`,
+            icon: DollarSign,
+            color: 'bg-purple-600',
+          },
+        ]
+      : []),
   ];
 
-  // Show loading spinner only while actually loading
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -228,7 +304,6 @@ const DashboardSummary = ({ role = 'interpreter' }) => {
     );
   }
 
-  // Show error if not authenticated
   if (!isAuthenticated || !currentUser) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -279,7 +354,7 @@ const DashboardSummary = ({ role = 'interpreter' }) => {
         )}
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {statsCards.map((stat, index) => (
             <div
               key={index}
@@ -289,17 +364,6 @@ const DashboardSummary = ({ role = 'interpreter' }) => {
                 <div className="flex-1">
                   <p className="text-sm text-gray-600 font-medium">{stat.label}</p>
                   <p className="text-xl font-semibold text-gray-900 mt-2">{stat.value}</p>
-                  <div className="flex items-center mt-2">
-                    {stat.trend === 'up' ? (
-                      <ArrowUpRight className="w-4 h-4 text-green-500" />
-                    ) : (
-                      <ArrowDownRight className="w-4 h-4 text-red-500" />
-                    )}
-                    <span className={`text-sm font-medium ml-1 ${stat.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                      {stat.change}
-                    </span>
-                    <span className="text-sm text-gray-500 ml-2">vs last month</span>
-                  </div>
                 </div>
                 <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center shadow-sm`}>
                   <stat.icon className="w-5 h-5 text-white" />

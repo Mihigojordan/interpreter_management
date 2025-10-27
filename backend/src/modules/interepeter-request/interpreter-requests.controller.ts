@@ -81,12 +81,20 @@ export class InterpreterRequestsController {
       throw new BadRequestException(error.message);
     }
   }
-
+  @Post(':id/request-payment')
+  async requestPayment(@Param('id') id: string, @Body() data: any) {
+    try {
+      return await this.interpreterRequestsService.requestPayment(id,data.amount);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+  
   // ✅ APPROVE interpreter request
   @Post(':id/approve')
-  async approveRequest(@Param('id') id: string, @Body() data: ApproveRequestInput) {
+  async approveRequest(@Param('id') id: string, @Body() data: any) {
     try {
-      return await this.interpreterRequestsService.approveRequest(id, data.interpreterId);
+      return await this.interpreterRequestsService.approveRequest(id, data.interpreterId,data.amount);
     } catch (error) {
       throw new BadRequestException(error.message);
     }

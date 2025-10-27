@@ -68,7 +68,7 @@ export class InterpreterService {
 
   // ✅ Update interpreter
   async update(id: string, data: any) {
-    this.validateInterpreterData(data);
+    
 
     const interpreter = await this.prisma.interpreter.findUnique({ where: { id } });
     if (!interpreter) throw new NotFoundException('Interpreter not found');
@@ -139,6 +139,8 @@ export class InterpreterService {
 
     return updated;
   }
+
+  
 
   // ✅ Reject interpreter with reason
   async rejectInterpreter(id: string, reason: string) {

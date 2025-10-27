@@ -77,9 +77,18 @@ class InterpretationRequestService {
     }
 
     // Approve interpretation request
-    async approveRequest(id, interpreterId) {
+    async approveRequest(id, interpreterId,amount) {
         try {
-            const response = await api.post(`/interpreter-requests/${id}/approve`, { interpreterId });
+            const response = await api.post(`/interpreter-requests/${id}/approve`, { interpreterId,amount });
+            return response.data;
+        } catch (error) {
+            const msg = error.response.data.message || 'Failed to approve interpretation request';
+            throw new Error(msg);
+        }
+    }
+    async requestPayment(id, amount) {
+        try {
+            const response = await api.post(`/interpreter-requests/${id}/request-payment`, { amount });
             return response.data;
         } catch (error) {
             const msg = error.response.data.message || 'Failed to approve interpretation request';

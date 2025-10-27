@@ -28,6 +28,7 @@ import InterpreterRequest from "./pages/dashboard/InterpreterRequest";
 import InterpretationRequestDetails from "./pages/dashboard/InterpretationRequestDetails";
 import InterpreterRequestDashboard from "./pages/dashboard/InterpreterRequestDashboard";
 import RequestDetailsPage from "./pages/dashboard/RequestDetails";
+import InterpreterDetailView from "./pages/dashboard/InterpreterViewMorePage";
 
 
 
@@ -56,6 +57,7 @@ const router = createBrowserRouter([
         children:[
           {index:true , element:<DashboardHome />},
           {path:'interpreter' , element:<InterpreterDashboard />},
+          {path:'interpreter/:id' , element:<InterpreterDetailView />},
           {path:'interpreter-request' , element:<InterpreterRequest />},
           {path:'interpreter-request/:id' , element:<InterpretationRequestDetails />},
           {path:'report' , element:<ReportDashboard />},

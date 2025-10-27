@@ -56,6 +56,8 @@ model InterpreterRequest {
   urgencyLevel            String
   additionalNotes         String?
   status                  String   @default("pending") // Supports 'pending', 'accepted', 'rejected'
+  paymentStatus    PaymentStatus    @default(PENDING)
+  amount    Int?
   interpreterId           String?  // Add this to link to Interpreter
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
@@ -87,6 +89,8 @@ model Interpreter {
   country   String
   password  String?
   status    Status    @default(PENDING)
+  paymentStatus    PaymentStatus    @default(PENDING)
+  amount    Int?
   reason    String?
   isOnline  Boolean   @default(false)
   createdAt DateTime  @default(now())
@@ -104,6 +108,10 @@ enum Status {
   PENDING
   ACCEPTED
   REJECTED
+}
+enum PaymentStatus {
+  PENDING
+  PAID
 }
 
 

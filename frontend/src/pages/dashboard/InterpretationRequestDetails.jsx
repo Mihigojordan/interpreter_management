@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowLeft, CheckCircle, AlertCircle, Calendar, Clock, MapPin, User, Mail, Phone, Globe, FileText, Zap, MessageSquare, Briefcase } from 'lucide-react';
+import { X, ArrowLeft, CheckCircle, AlertCircle, Calendar, Clock, MapPin, User, Mail, Phone, Globe, FileText, Zap, MessageSquare, Briefcase, DollarSign } from 'lucide-react';
 import interpretationRequestService from '../../services/interpretationRequestService';
 import interpreterService from '../../services/interpreterService';
 
@@ -13,10 +13,14 @@ const InterpretationRequestDetails = () => {
   const [interpreters, setInterpreters] = useState([]);
   const [selectedInterpreter, setSelectedInterpreter] = useState('');
   const [rejectionReason, setRejectionReason] = useState('');
+  const [paymentAmount, setPaymentAmount] = useState('');
+  const [approveAmount, setApproveAmount] = useState('');
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,20 +42,48 @@ const InterpretationRequestDetails = () => {
     fetchData();
   }, [id]);
 
-  const handleApprove = async () => {
-    if (!selectedInterpreter) {
-      setError('Please select an interpreter');
+  const handleRequestPayment = async () => {
+    if (!paymentAmount || isNaN(paymentAmount) || paymentAmount <= 0) {
+      setError('Please enter a valid payment amount');
       return;
     }
     try {
       setActionLoading(true);
       setError(null);
       setSuccessMessage(null);
-      await interpretationRequestService.approveRequest(id, selectedInterpreter);
+      await interpretationRequestService.requestPayment(id, parseFloat(paymentAmount));
+      const updatedRequest = await interpretationRequestService.getRequestById(id);
+      setRequest(updatedRequest);
+      setSuccessMessage('Payment request submitted successfully!');
+      setPaymentAmount('');
+      setIsPaymentModalOpen(false);
+    } catch (err) {
+      setError(err.message || 'Failed to request payment');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleApprove = async () => {
+    if (!selectedInterpreter) {
+      setError('Please select an interpreter');
+      return;
+    }
+    if (!approveAmount || isNaN(approveAmount) || approveAmount <= 0) {
+      setError('Please enter a valid amount');
+      return;
+    }
+    try {
+      setActionLoading(true);
+      setError(null);
+      setSuccessMessage(null);
+      await interpretationRequestService.approveRequest(id, selectedInterpreter, parseFloat(approveAmount));
       const updatedRequest = await interpretationRequestService.getRequestById(id);
       setRequest(updatedRequest);
       setSuccessMessage('Request approved successfully!');
       setSelectedInterpreter('');
+      setApproveAmount('');
+      setIsApproveModalOpen(false);
     } catch (err) {
       setError(err.message || 'Failed to approve request');
     } finally {
@@ -316,45 +348,30 @@ const InterpretationRequestDetails = () => {
                   <Briefcase className="w-6 h-6 mr-2 text-indigo-600" />
                   Manage Request
                 </h2>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Approve Section */}
-                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
-                    <h3 className="text-lg font-bold text-green-900 mb-4 flex items-center">
-                      <CheckCircle className="w-5 h-5 mr-2" />
-                      Approve Request
-                    </h3>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Select Interpreter
-                    </label>
-                    <select
-                      value={selectedInterpreter}
-                      onChange={(e) => setSelectedInterpreter(e.target.value)}
-                      className="w-full p-3 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white mb-4"
-                      disabled={actionLoading}
-                    >
-                      <option value="">Choose an interpreter...</option>
-                      {interpreters.map((interpreter) => (
-                        <option key={interpreter.id} value={interpreter.id}>
-                          {interpreter.name} ({interpreter.email})
-                        </option>
-                      ))}
-                    </select>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handleApprove}
-                      disabled={actionLoading || !selectedInterpreter}
-                      className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-6 rounded-lg font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
-                    >
-                      {actionLoading ? (
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                      ) : (
-                        <CheckCircle className="w-5 h-5 mr-2" />
-                      )}
-                      Approve Request
-                    </motion.button>
-                  </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Request Payment Button */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setIsPaymentModalOpen(true)}
+                    disabled={actionLoading}
+                    className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-6 rounded-lg font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
+                  >
+                    <DollarSign className="w-5 h-5 mr-2" />
+                    Request Payment
+                  </motion.button>
+
+                  {/* Approve Request Button */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setIsApproveModalOpen(true)}
+                    disabled={actionLoading}
+                    className="bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-6 rounded-lg font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
+                  >
+                    <CheckCircle className="w-5 h-5 mr-2" />
+                    Approve Request
+                  </motion.button>
 
                   {/* Reject Section */}
                   <div className="bg-gradient-to-br from-red-50 to-rose-50 rounded-xl p-6 border border-red-200">
@@ -391,6 +408,156 @@ const InterpretationRequestDetails = () => {
                 </div>
               </motion.div>
             )}
+
+            {/* Payment Request Modal */}
+            <AnimatePresence>
+              {isPaymentModalOpen && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                >
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    className="bg-white rounded-2xl p-6 max-w-md w-full"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                        <DollarSign className="w-5 h-5 mr-2 text-blue-600" />
+                        Request Payment
+                      </h3>
+                      <button
+                        onClick={() => setIsPaymentModalOpen(false)}
+                        className="p-1 rounded-full hover:bg-gray-100"
+                      >
+                        <X className="w-5 h-5 text-gray-600" />
+                      </button>
+                    </div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Payment Amount ($)
+                    </label>
+                    <input
+                      type="number"
+                      value={paymentAmount}
+                      onChange={(e) => setPaymentAmount(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white mb-4"
+                      placeholder="Enter amount"
+                      disabled={actionLoading}
+                    />
+                    <div className="flex space-x-4">
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleRequestPayment}
+                        disabled={actionLoading || !paymentAmount}
+                        className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-6 rounded-lg font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
+                      >
+                        {actionLoading ? (
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        ) : (
+                          <DollarSign className="w-5 h-5 mr-2" />
+                        )}
+                        Send
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setIsPaymentModalOpen(false)}
+                        className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                      >
+                        Cancel
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Approve Request Modal */}
+            <AnimatePresence>
+              {isApproveModalOpen && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                >
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    className="bg-white rounded-2xl p-6 max-w-md w-full"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                        <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
+                        Approve Request
+                      </h3>
+                      <button
+                        onClick={() => setIsApproveModalOpen(false)}
+                        className="p-1 rounded-full hover:bg-gray-100"
+                      >
+                        <X className="w-5 h-5 text-gray-600" />
+                      </button>
+                    </div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Select Interpreter
+                    </label>
+                    <select
+                      value={selectedInterpreter}
+                      onChange={(e) => setSelectedInterpreter(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white mb-4"
+                      disabled={actionLoading}
+                    >
+                      <option value="">Choose an interpreter...</option>
+                      {interpreters.map((interpreter) => (
+                        <option key={interpreter.id} value={interpreter.id}>
+                          {interpreter.name} ({interpreter.email})
+                        </option>
+                      ))}
+                    </select>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Approval Amount ($)
+                    </label>
+                    <input
+                      type="number"
+                      value={approveAmount}
+                      onChange={(e) => setApproveAmount(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white mb-4"
+                      placeholder="Enter amount"
+                      disabled={actionLoading}
+                    />
+                    <div className="flex space-x-4">
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleApprove}
+                        disabled={actionLoading || !selectedInterpreter || !approveAmount}
+                        className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-6 rounded-lg font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
+                      >
+                        {actionLoading ? (
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        ) : (
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                        )}
+                        Approve Request
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setIsApproveModalOpen(false)}
+                        className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                      >
+                        Cancel
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Metadata */}
             <motion.div

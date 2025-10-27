@@ -44,7 +44,7 @@ const InterpreterProfilePage = () => {
 
         {/* Main Content */}
         <div className="h-full overflow-y-auto flex-1 p-4">
-          <div className="max-w-4xl mx-auto">
+          <div className=" mx-auto">
             <div className="bg-white rounded border border-gray-200">
               <div className="px-4 py-3 border-b border-gray-200">
                 <h1 className="text-lg font-semibold text-gray-900">

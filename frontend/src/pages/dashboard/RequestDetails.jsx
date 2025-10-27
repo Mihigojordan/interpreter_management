@@ -60,7 +60,7 @@ const RequestDetailsPage = () => {
 
   const getUrgencyColor = (urgency) => {
     const colors = {
-      low: 'bg-blue-100 text-blue-800',
+      low: 'bg-primary-100 text-primary-800',
       medium: 'bg-yellow-100 text-yellow-800',
       high: 'bg-red-100 text-red-800',
     };
@@ -98,7 +98,7 @@ const RequestDetailsPage = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-white rounded-lg shadow p-6 text-center text-gray-600">
           <div className="inline-flex items-center space-x-2">
-            <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-5 h-5 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
             <span className="text-sm">Loading request details...</span>
           </div>
         </div>
@@ -118,7 +118,7 @@ const RequestDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 font-sans">
-      <div className="max-w-6xl mx-auto">
+      <div className=" mx-auto">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-start justify-between">
@@ -126,7 +126,7 @@ const RequestDetailsPage = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 onClick={() => navigate(-1)}
-                className="text-gray-600 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50"
+                className="text-gray-600 hover:text-primary-600 p-2 rounded-full hover:bg-primary-50"
                 aria-label="Back to dashboard"
               >
                 <ArrowLeft className="w-5 h-5" />
@@ -157,7 +157,7 @@ const RequestDetailsPage = () => {
                 onClick={() => setActiveTab('details')}
                 className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'details'
-                    ? 'border-blue-500 text-blue-600'
+                    ? 'border-primary-500 text-primary-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -168,14 +168,14 @@ const RequestDetailsPage = () => {
                 onClick={() => setActiveTab('messages')}
                 className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'messages'
-                    ? 'border-blue-500 text-blue-600'
+                    ? 'border-primary-500 text-primary-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 <MessageSquare className="inline w-4 h-4 mr-2" />
                 Messages
                 {messages.length > 0 && (
-                  <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-600 rounded-full text-xs">
+                  <span className="ml-2 px-2 py-1 bg-primary-100 text-primary-600 rounded-full text-xs">
                     {messages.length}
                   </span>
                 )}
@@ -190,7 +190,7 @@ const RequestDetailsPage = () => {
                 {/* Client Information */}
                 <section>
                   <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                    <User className="w-5 h-5 mr-2 text-blue-600" />
+                    <User className="w-5 h-5 mr-2 text-primary-600" />
                     Client Information
                   </h2>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -222,7 +222,7 @@ const RequestDetailsPage = () => {
                 {/* Service Details */}
                 <section>
                   <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                    <Globe className="w-5 h-5 mr-2 text-blue-600" />
+                    <Globe className="w-5 h-5 mr-2 text-primary-600" />
                     Service Details
                   </h2>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -248,7 +248,7 @@ const RequestDetailsPage = () => {
                 {/* Appointment Details */}
                 <section>
                   <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                    <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+                    <Calendar className="w-5 h-5 mr-2 text-primary-600" />
                     Appointment Details
                   </h2>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -276,7 +276,7 @@ const RequestDetailsPage = () => {
                 {/* Additional Information */}
                 <section>
                   <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                    <AlertCircle className="w-5 h-5 mr-2 text-blue-600" />
+                    <AlertCircle className="w-5 h-5 mr-2 text-primary-600" />
                     Additional Information
                   </h2>
                   <div className="space-y-4">
@@ -303,10 +303,10 @@ const RequestDetailsPage = () => {
                 {request.interpreter && (
                   <section>
                     <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                      <User className="w-5 h-5 mr-2 text-blue-600" />
+                      <User className="w-5 h-5 mr-2 text-primary-600" />
                       Assigned Interpreter
                     </h2>
-                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div className="bg-primary-50 p-4 rounded-lg border border-primary-200">
                       <p className="text-gray-900 font-medium">{request.interpreter.name || 'N/A'}</p>
                       <p className="text-gray-600 text-sm flex items-center">
                         <Mail className="w-4 h-4 mr-2 text-gray-500" />
@@ -344,11 +344,11 @@ const RequestDetailsPage = () => {
             {activeTab === 'messages' && (
               <div className="space-y-4">
                 {/* Info Banner */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
-                  <Mail className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 flex items-start gap-3">
+                  <Mail className="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-blue-900">Email Notification</p>
-                    <p className="text-sm text-blue-700">
+                    <p className="text-sm font-medium text-primary-900">Email Notification</p>
+                    <p className="text-sm text-primary-700">
                       Messages sent here will be delivered to the client's email:{' '}
                       <span className="font-semibold">{request.email || 'N/A'}</span>
                     </p>
@@ -375,7 +375,7 @@ const RequestDetailsPage = () => {
                         }`}
                       >
                         <div className="flex-shrink-0">
-                          <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-medium">
+                          <div className="w-10 h-10 rounded-full bg-primary-600 flex items-center justify-center text-white font-medium">
                             {message.interpreter?.name?.charAt(0) || 'U'}
                           </div>
                         </div>
@@ -395,7 +395,7 @@ const RequestDetailsPage = () => {
                           <div
                             className={`inline-block p-3 rounded-lg ${
                               message.interpreterId === request.interpreterId
-                                ? 'bg-blue-600 text-white'
+                                ? 'bg-primary-600 text-white'
                                 : 'bg-white text-gray-900 shadow-sm'
                             }`}
                           >
@@ -415,14 +415,14 @@ const RequestDetailsPage = () => {
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Type your message..."
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     aria-label="Type your message"
                   />
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     onClick={handleSendMessage}
                     disabled={!newMessage.trim()}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                    className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
                     aria-label="Send message"
                   >
                     <Send className="w-4 h-4" />
