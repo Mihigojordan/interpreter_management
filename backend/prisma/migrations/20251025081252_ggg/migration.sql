@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `interpreterrequest` ADD COLUMN `status` VARCHAR(191) NOT NULL DEFAULT 'pending';
+ALTER TABLE `InterpreterRequest` ADD COLUMN `status` VARCHAR(191) NOT NULL DEFAULT 'pending';

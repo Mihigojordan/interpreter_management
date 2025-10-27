@@ -18,15 +18,17 @@ import {
   DollarSign,
   Power,
 } from 'lucide-react';
-import interpretationRequestService from '../../services/InterpretationRequestService';
+import interpretationRequestService from '../../services/nterpretationRequestService';
 import interpreterService from '../../services/InterpreterService';
 import messageService from '../../services/MessageService';
 import { AdminAuthContext } from '../../context/AdminAuthContext';
 import { InterpreterAuthContext } from '../../context/InterpreterAuthContext';
+import { useOutletContext } from 'react-router-dom';
 
-const DashboardSummary = ({ role }) => {
+const DashboardSummary = () => {
   const { user: interpreterUser, isAuthenticated: isInterpreterAuthenticated } = useContext(InterpreterAuthContext);
   const { user: adminUser, isAuthenticated: isAdminAuthenticated } = useContext(AdminAuthContext);
+  const {role} = useOutletContext()
 
   const [dashboardData, setDashboardData] = useState({
     requests: [],
@@ -60,6 +62,7 @@ const DashboardSummary = ({ role }) => {
   const isAdmin = role === 'admin' && isAdminAuthenticated;
   const isAuthenticated = isAdmin ? isAdminAuthenticated : isInterpreterAuthenticated;
   const currentUser = isAdmin ? adminUser : interpreterUser;
+  // alert(role)
 
   useEffect(() => {
     if (!isAuthenticated || !currentUser) {
@@ -77,8 +80,8 @@ const DashboardSummary = ({ role }) => {
         let interpretersData = [];
         let messagesData = [];
 
-        // Fetch interpreter data for both roles
-        interpretersData = await interpreterService.getAllInterpreters();
+        // Fetch interpreter data for both roles (admin sees all, interpreter sees none)
+        interpretersData = isAdmin ? await interpreterService.getAllInterpreters() : [];
 
         // Fetch requests and messages based on role
         if (isAdmin) {
@@ -89,7 +92,8 @@ const DashboardSummary = ({ role }) => {
           requestsData = requests;
           messagesData = messages;
         } else {
-          requestsData = await interpretationRequestService.getAllRequestsByInterpreters();
+          // For interpreters, fetch only requests assigned to their interpreterId
+          requestsData = await interpretationRequestService.getAllRequestsByInterpreters(currentUser.id);
           const requestIds = requestsData.map((req) => req.id);
           if (requestIds.length > 0) {
             const messagePromises = requestIds.map((id) =>
@@ -136,17 +140,15 @@ const DashboardSummary = ({ role }) => {
           rejectedRequests: requestsData.filter((req) => req.status === 'rejected').length,
           assignedRequests: requestsData.filter((req) => req.interpreterId).length,
           paidRequests: requestsData.filter((req) => req.paymentStatus === 'PAID').length,
-          totalInterpreters: interpretersData.length,
-          pendingInterpreters: interpretersData.filter((int) => int.status === 'PENDING').length,
-          acceptedInterpreters: interpretersData.filter((int) => int.status === 'ACCEPTED').length,
-          rejectedInterpreters: interpretersData.filter((int) => int.status === 'REJECTED').length,
-          paidInterpreters: interpretersData.filter((int) => int.paymentStatus === 'PAID').length,
-          onlineInterpreters: interpretersData.filter((int) => int.isOnline).length,
-          offlineInterpreters: interpretersData.filter((int) => !int.isOnline).length,
-          activeInterpreters: interpretersData.filter((int) => int.status === 'ACCEPTED').length,
-          deactivatedInterpreters: interpretersData.filter(
-            (int) => int.status !== 'ACCEPTED'
-          ).length,
+          totalInterpreters: isAdmin ? interpretersData.length : 0,
+          pendingInterpreters: isAdmin ? interpretersData.filter((int) => int.status === 'PENDING').length : 0,
+          acceptedInterpreters: isAdmin ? interpretersData.filter((int) => int.status === 'ACCEPTED').length : 0,
+          rejectedInterpreters: isAdmin ? interpretersData.filter((int) => int.status === 'REJECTED').length : 0,
+          paidInterpreters: isAdmin ? interpretersData.filter((int) => int.paymentStatus === 'PAID').length : 0,
+          onlineInterpreters: isAdmin ? interpretersData.filter((int) => int.isOnline).length : 0,
+          offlineInterpreters: isAdmin ? interpretersData.filter((int) => !int.isOnline).length : 0,
+          activeInterpreters: isAdmin ? interpretersData.filter((int) => int.status === 'ACCEPTED').length : 0,
+          deactivatedInterpreters: isAdmin ? interpretersData.filter((int) => int.status !== 'ACCEPTED').length : 0,
           totalAmountRequests: isAdmin
             ? requestsData.reduce((sum, req) => sum + (req.amount || 0), 0)
             : 0,
@@ -219,71 +221,71 @@ const DashboardSummary = ({ role }) => {
       icon: DollarSign,
       color: 'bg-teal-500',
     },
-    {
-      label: 'Total Interpreters',
-      value: dashboardData.stats.totalInterpreters,
-      icon: Users,
-      color: 'bg-indigo-500',
-    },
-    {
-      label: 'Pending Interpreters',
-      value: dashboardData.stats.pendingInterpreters,
-      icon: Clock,
-      color: 'bg-orange-500',
-    },
-    {
-      label: 'Accepted Interpreters',
-      value: dashboardData.stats.acceptedInterpreters,
-      icon: Users,
-      color: 'bg-green-600',
-    },
-    {
-      label: 'Rejected Interpreters',
-      value: dashboardData.stats.rejectedInterpreters,
-      icon: Users,
-      color: 'bg-red-600',
-    },
-    {
-      label: 'Paid Interpreters',
-      value: dashboardData.stats.paidInterpreters,
-      icon: DollarSign,
-      color: 'bg-blue-600',
-    },
-    {
-      label: 'Online Interpreters',
-      value: dashboardData.stats.onlineInterpreters,
-      icon: Power,
-      color: 'bg-teal-600',
-    },
-    {
-      label: 'Offline Interpreters',
-      value: dashboardData.stats.offlineInterpreters,
-      icon: Power,
-      color: 'bg-gray-500',
-    },
-    {
-      label: 'Active Interpreters',
-      value: dashboardData.stats.activeInterpreters,
-      icon: Users,
-      color: 'bg-green-700',
-    },
-    {
-      label: 'Deactivated Interpreters',
-      value: dashboardData.stats.deactivatedInterpreters,
-      icon: Users,
-      color: 'bg-red-700',
-    },
     ...(isAdmin
       ? [
           {
+            label: 'Total Interpreters',
+            value: dashboardData.stats.totalInterpreters,
+            icon: Users,
+            color: 'bg-indigo-500',
+          },
+          {
+            label: 'Pending Interpreters',
+            value: dashboardData.stats.pendingInterpreters,
+            icon: Clock,
+            color: 'bg-orange-500',
+          },
+          {
+            label: 'Accepted Interpreters',
+            value: dashboardData.stats.acceptedInterpreters,
+            icon: Users,
+            color: 'bg-green-600',
+          },
+          {
+            label: 'Rejected Interpreters',
+            value: dashboardData.stats.rejectedInterpreters,
+            icon: Users,
+            color: 'bg-red-600',
+          },
+          {
+            label: 'Paid Interpreters',
+            value: dashboardData.stats.paidInterpreters,
+            icon: DollarSign,
+            color: 'bg-blue-600',
+          },
+          {
+            label: 'Online Interpreters',
+            value: dashboardData.stats.onlineInterpreters,
+            icon: Power,
+            color: 'bg-teal-600',
+          },
+          {
+            label: 'Offline Interpreters',
+            value: dashboardData.stats.offlineInterpreters,
+            icon: Power,
+            color: 'bg-gray-500',
+          },
+          {
+            label: 'Active Interpreters',
+            value: dashboardData.stats.activeInterpreters,
+            icon: Users,
+            color: 'bg-green-700',
+          },
+          {
+            label: 'Deactivated Interpreters',
+            value: dashboardData.stats.deactivatedInterpreters,
+            icon: Users,
+            color: 'bg-red-700',
+          },
+          {
             label: 'Total Amount (Requests)',
-            value: `$${dashboardData.stats.totalAmountRequests.toLocaleString()}`,
+            value: `RWF ${dashboardData.stats.totalAmountRequests.toLocaleString()}`,
             icon: DollarSign,
             color: 'bg-pink-500',
           },
           {
             label: 'Total Amount (Interpreters)',
-            value: `$${dashboardData.stats.totalAmountInterpreters.toLocaleString()}`,
+            value: `RWF ${dashboardData.stats.totalAmountInterpreters.toLocaleString()}`,
             icon: DollarSign,
             color: 'bg-purple-600',
           },
