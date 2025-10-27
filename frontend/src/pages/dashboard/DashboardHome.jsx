@@ -18,7 +18,7 @@ import {
   DollarSign,
   Power,
 } from 'lucide-react';
-import interpretationRequestService from '../../services/nterpretationRequestService';
+import interpretationRequestService from '../../services/interpretationRequestService';
 import interpreterService from '../../services/InterpreterService';
 import messageService from '../../services/MessageService';
 import { AdminAuthContext } from '../../context/AdminAuthContext';
